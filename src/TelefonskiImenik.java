@@ -1,5 +1,9 @@
+import grafika.GlavnoOkno;
+
 import java.sql.Connection;
 import java.sql.DriverManager;
+
+import javax.swing.JFrame;
 
 
 public class TelefonskiImenik {
@@ -16,10 +20,12 @@ public class TelefonskiImenik {
 	}
 	
 	public static void main(String[] args) {
-		System.out.println("Hello, world!");
 		Connection c = poveziSeZBazo();
 		if (c == null) {
 			return ;
 		}
+		JFrame glavnoOkno = new GlavnoOkno();
+		glavnoOkno.pack();
+		glavnoOkno.setVisible(true);
 	}
 }
