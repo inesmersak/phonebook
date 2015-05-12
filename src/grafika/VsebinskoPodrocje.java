@@ -74,9 +74,14 @@ public class VsebinskoPodrocje extends JPanel implements ActionListener, ListSel
         kontakti.setSelectedIndex(0);
         kontakti.addListSelectionListener(this);
         
-        JScrollPane kontaktiScrollPane = new JScrollPane(kontakti);
         prikazKontakta = new JEditorPane();
-        JSplitPane glavnoPodrocje = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, kontaktiScrollPane, prikazKontakta);
+        prikazKontakta.setText(kontakti.getSelectedValue());
+        
+        JScrollPane kontaktiScrollPane = new JScrollPane(kontakti);
+        JScrollPane prikazScrollPane = new JScrollPane(prikazKontakta);
+        
+        JSplitPane glavnoPodrocje = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, kontaktiScrollPane, 
+        		prikazScrollPane);
         c.fill = GridBagConstraints.BOTH;
         c.gridy = 1;
         c.weighty = 1;
@@ -144,6 +149,7 @@ public class VsebinskoPodrocje extends JPanel implements ActionListener, ListSel
 	public void valueChanged(ListSelectionEvent e) {
 		@SuppressWarnings("unchecked")
 		JList<String> kliknjenSeznam = (JList<String>) e.getSource();
+		prikazKontakta.setText(kliknjenSeznam.getSelectedValue());
 		System.out.println(kliknjenSeznam.getSelectedIndex());
 	}
 	
