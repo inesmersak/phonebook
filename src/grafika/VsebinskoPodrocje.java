@@ -21,9 +21,12 @@ import javax.swing.ListSelectionModel;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
+import baza.Baza;
+
 @SuppressWarnings("serial")
 public class VsebinskoPodrocje extends JPanel implements ActionListener, ListSelectionListener {
 	private JEditorPane prikazKontakta;
+	private Baza baza;
 	
 	static private final String DODAJ = "dodaj";
 	static private final String UREDI = "uredi";
@@ -32,6 +35,9 @@ public class VsebinskoPodrocje extends JPanel implements ActionListener, ListSel
 	
 	public VsebinskoPodrocje() {
 		super(new GridBagLayout());
+		
+		baza = new Baza();
+		baza.poveziSeZBazo();
 		
 		setPreferredSize(new Dimension(300, 300));
 		
@@ -68,7 +74,7 @@ public class VsebinskoPodrocje extends JPanel implements ActionListener, ListSel
         dodajGumbe(toolbar);
         
         // TODO implement ListListener, extending the JSplitPane class
-        String[] imena = {"Anja", "Barbara", "Polona"};
+        String[] imena = baza.izberiTabelo();
         JList<String> kontakti = new JList<String>(imena);
         kontakti.setSelectionMode(ListSelectionModel.SINGLE_INTERVAL_SELECTION);
         kontakti.setSelectedIndex(0);
@@ -87,6 +93,8 @@ public class VsebinskoPodrocje extends JPanel implements ActionListener, ListSel
         c.weighty = 1;
         c.anchor = GridBagConstraints.SOUTH;
         add(glavnoPodrocje, c);
+        
+        baza.zapriPovezavo();
 	}
 
 	@Override
