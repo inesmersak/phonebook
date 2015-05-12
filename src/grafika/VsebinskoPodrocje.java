@@ -13,19 +13,24 @@ import javax.swing.JEditorPane;
 import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
 import javax.swing.JTextField;
 import javax.swing.JToolBar;
+import javax.swing.ListSelectionModel;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
 
 @SuppressWarnings("serial")
-public class Toolbar extends JPanel implements ActionListener {
+public class VsebinskoPodrocje extends JPanel implements ActionListener, ListSelectionListener {
+	private JEditorPane prikazKontakta;
+	
 	static private final String DODAJ = "dodaj";
 	static private final String UREDI = "uredi";
 	static private final String IZBRISI = "izbrisi";
 	static private final String VNESEN_TEKST = "vnesen tekst";
 	
-	// TODO rename the inappropriate name
-	public Toolbar() {
+	public VsebinskoPodrocje() {
 		super(new GridBagLayout());
 		
 		setPreferredSize(new Dimension(300, 300));
@@ -65,8 +70,13 @@ public class Toolbar extends JPanel implements ActionListener {
         // TODO implement ListListener, extending the JSplitPane class
         String[] imena = {"Anja", "Barbara", "Polona"};
         JList<String> kontakti = new JList<String>(imena);
-        JEditorPane prikazKontakta = new JEditorPane();
-        JSplitPane glavnoPodrocje = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, kontakti, prikazKontakta);
+        kontakti.setSelectionMode(ListSelectionModel.SINGLE_INTERVAL_SELECTION);
+        kontakti.setSelectedIndex(0);
+        kontakti.addListSelectionListener(this);
+        
+        JScrollPane kontaktiScrollPane = new JScrollPane(kontakti);
+        prikazKontakta = new JEditorPane();
+        JSplitPane glavnoPodrocje = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, kontaktiScrollPane, prikazKontakta);
         c.fill = GridBagConstraints.BOTH;
         c.gridy = 1;
         c.weighty = 1;
@@ -76,8 +86,16 @@ public class Toolbar extends JPanel implements ActionListener {
 
 	@Override
 	public void actionPerformed(ActionEvent e) {
-		// TODO Auto-generated method stub
-		
+		String cmd = e.getActionCommand();
+		if (cmd.equals(DODAJ)) {
+			System.out.println("1" + cmd);
+		} else if (cmd.equals(UREDI)) {
+			System.out.println("2" + cmd);
+		} else if (cmd.equals(IZBRISI)) {
+			System.out.println("3" + cmd);
+		} else {
+			System.out.println("command not found");
+		}
 	}
 	
 	private JButton narediGumb(String imeSlike, String actionCommand, String altTekst) {
@@ -87,8 +105,7 @@ public class Toolbar extends JPanel implements ActionListener {
 		gumb.addActionListener(this);
 		
 		String potSlike = "/" + imeSlike + ".png";
-		System.out.println(potSlike);
-		URL urlSlike = Toolbar.class.getResource(potSlike);
+		URL urlSlike = VsebinskoPodrocje.class.getResource(potSlike);
 		
 		if (urlSlike != null) {
 			gumb.setIcon(new ImageIcon(urlSlike, altTekst));
@@ -121,6 +138,13 @@ public class Toolbar extends JPanel implements ActionListener {
 		c.gridx = 3;
 		gumb = narediGumb("izbrisi", IZBRISI, "Izbriši številko");
 		toolbar.add(gumb, c);
+	}
+
+	@Override
+	public void valueChanged(ListSelectionEvent e) {
+		@SuppressWarnings("unchecked")
+		JList<String> kliknjenSeznam = (JList<String>) e.getSource();
+		System.out.println(kliknjenSeznam.getSelectedIndex());
 	}
 	
 }

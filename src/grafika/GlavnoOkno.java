@@ -7,7 +7,7 @@ import javax.swing.JPanel;
 public class GlavnoOkno extends JFrame {
 	public GlavnoOkno() {
 		super("Telefonski imenik");
-		JPanel toolbarMeni = new Toolbar();
-		add(toolbarMeni);
+		JPanel vsebina = new VsebinskoPodrocje();
+		add(vsebina);
 	}
 }
