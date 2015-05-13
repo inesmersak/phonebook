@@ -27,6 +27,7 @@ import baza.Baza;
 public class VsebinskoPodrocje extends JPanel implements ActionListener, ListSelectionListener {
 	private JEditorPane prikazKontakta;
 	private Baza baza;
+	private String[][] seznamKontaktov;
 	
 	static private final String DODAJ = "dodaj";
 	static private final String UREDI = "uredi";
@@ -38,6 +39,7 @@ public class VsebinskoPodrocje extends JPanel implements ActionListener, ListSel
 		
 		baza = new Baza();
 		baza.poveziSeZBazo();
+		seznamKontaktov = baza.izberiTabelo();
 		
 		setPreferredSize(new Dimension(300, 300));
 		
@@ -74,7 +76,7 @@ public class VsebinskoPodrocje extends JPanel implements ActionListener, ListSel
         dodajGumbe(toolbar);
         
         // TODO implement ListListener, extending the JSplitPane class
-        String[] imena = baza.izberiTabelo();
+        String[] imena = dobiPolnaImena();
         JList<String> kontakti = new JList<String>(imena);
         kontakti.setSelectionMode(ListSelectionModel.SINGLE_INTERVAL_SELECTION);
         kontakti.setSelectedIndex(0);
@@ -94,7 +96,21 @@ public class VsebinskoPodrocje extends JPanel implements ActionListener, ListSel
         c.anchor = GridBagConstraints.SOUTH;
         add(glavnoPodrocje, c);
         
+        String[] staro = {"Ines", "Meršak", "040126776", "Plešičeva ulica 23", "Ljubljana", "1000"};
+        String[] novo = {"Ines", "Meršak", "040126776", "Plešičeva ulica 25", "Ljubljana", "1000"};
+        // baza.dodajKontakt("Marijan", "Meršak", "041659073", "Plešičeva ulica 25", "Ljubljana", "1000");
         baza.zapriPovezavo();
+	}
+
+	private String[] dobiPolnaImena() {
+		String[] polnaImena = new String[seznamKontaktov.length];
+		int i = 0;
+		for(String[] vrs : seznamKontaktov) {
+			String polnoIme = vrs[0] + " " + vrs[1];
+			polnaImena[i] = polnoIme;
+			i++;
+		}
+		return polnaImena;
 	}
 
 	@Override
