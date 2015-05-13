@@ -83,7 +83,7 @@ public class VsebinskoPodrocje extends JPanel implements ActionListener, ListSel
         kontakti.addListSelectionListener(this);
         
         prikazKontakta = new JEditorPane();
-        prikazKontakta.setText(kontakti.getSelectedValue());
+        posodobiPrikaz(0);
         
         JScrollPane kontaktiScrollPane = new JScrollPane(kontakti);
         JScrollPane prikazScrollPane = new JScrollPane(prikazKontakta);
@@ -96,9 +96,9 @@ public class VsebinskoPodrocje extends JPanel implements ActionListener, ListSel
         c.anchor = GridBagConstraints.SOUTH;
         add(glavnoPodrocje, c);
         
-        String[] staro = {"Ines", "Meršak", "040126776", "Plešičeva ulica 23", "Ljubljana", "1000"};
-        String[] novo = {"Ines", "Meršak", "040126776", "Plešičeva ulica 25", "Ljubljana", "1000"};
-        // baza.dodajKontakt("Marijan", "Meršak", "041659073", "Plešičeva ulica 25", "Ljubljana", "1000");
+//        String[] staro = {"Ines", "Meršak", "040126776", "Plešičeva ulica 23", "Ljubljana", "1000"};
+//        String[] novo = {"Ines", "Meršak", "040126776", "Plešičeva ulica 25", "Ljubljana", "1000"};
+//        baza.dodajKontakt("Marijan", "Meršak", "041659073", "Plešičeva ulica 25", "Ljubljana", "1000");
         baza.zapriPovezavo();
 	}
 
@@ -173,8 +173,24 @@ public class VsebinskoPodrocje extends JPanel implements ActionListener, ListSel
 	public void valueChanged(ListSelectionEvent e) {
 		@SuppressWarnings("unchecked")
 		JList<String> kliknjenSeznam = (JList<String>) e.getSource();
-		prikazKontakta.setText(kliknjenSeznam.getSelectedValue());
-		System.out.println(kliknjenSeznam.getSelectedIndex());
+		int ind = kliknjenSeznam.getSelectedIndex();
+		posodobiPrikaz(ind);
+		System.out.println(ind);
 	}
 	
+	/**
+	 * @param indeks Indeks elementa, ki je bil kliknjen.
+	 * Ob kliku na drug kontakt zamenja prikaz na desni strani.
+	 */
+	private void posodobiPrikaz(int indeks) {
+		String[] izbranKontakt = seznamKontaktov[indeks];
+		String zaPrikaz = String.format("Ime: %s \n" +
+				"Priimek: %s \n" +
+				"Telefonska številka: %s \n" +
+				"Naslov: %s \n" +
+				"Kraj: %s \n" +
+				"Poštna številka: %s \n", 
+				(Object[]) izbranKontakt);
+		prikazKontakta.setText(zaPrikaz);
+	}
 }
