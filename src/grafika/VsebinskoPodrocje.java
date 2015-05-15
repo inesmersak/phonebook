@@ -98,7 +98,7 @@ public class VsebinskoPodrocje extends JPanel implements ActionListener, ListSel
         
 //        String[] staro = {"Ines", "Meršak", "040126776", "Plešičeva ulica 23", "Ljubljana", "1000"};
 //        String[] novo = {"Ines", "Meršak", "040126776", "Plešičeva ulica 25", "Ljubljana", "1000"};
-//        baza.dodajKontakt("Marijan", "Meršak", "041659073", "Plešičeva ulica 25", "Ljubljana", "1000");
+//        baza.dodajKontakt("Jure", "Slak", "051239323", "Ulica bratov Potočnikov 13", "Brezovica pri Ljubljani", "");
         baza.zapriPovezavo();
 	}
 

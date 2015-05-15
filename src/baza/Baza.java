@@ -92,7 +92,7 @@ public class Baza {
 	public boolean dodajKontakt(String dIme, String dPriimek, String dStevilka, 
 			String dNaslov, String dKraj, String dPosta) {
 		if (dIme.length() == 0 || dPriimek.length() == 0 || dStevilka.length() == 0 ||
-				dPosta.length() != 4) {
+				(dPosta.length() != 4 && dPosta.length() != 0)) {
 			return false;
 		}
 		try {
