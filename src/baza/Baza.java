@@ -1,14 +1,14 @@
 package baza;
 import java.sql.Connection;
 import java.sql.DriverManager;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Statement;
 
 
 public class Baza {
 	private Connection c;
-	private Statement izjava;
+	private PreparedStatement izjava = null;
 	private int steviloStolpcev = 6; // stevilo stolpcev v bazi
 	
 	public void poveziSeZBazo() {
@@ -16,7 +16,6 @@ public class Baza {
 		try {
 			Class.forName("org.sqlite.JDBC");
 			c = DriverManager.getConnection("jdbc:sqlite:imenik.db");
-			izjava = c.createStatement();
 		} catch (Exception e) {
 			System.out.println("Povezava z bazo ni uspela.");
 			System.out.println(e.getClass().getName() + ": " + e.getMessage());
@@ -42,7 +41,8 @@ public class Baza {
 	                " NASLOV TEXT, " + 
 	                " KRAJ TEXT, " +
 	                " POSTA CHAR(4))";	
-			izjava.executeUpdate(query);
+			izjava = c.prepareStatement(query);
+			izjava.executeUpdate();
 		} catch (SQLException e) {
 			System.out.println(e.getMessage());
 		}
@@ -50,8 +50,9 @@ public class Baza {
 	
 	public void izbrisiTabelo() {
 		try {
-			String query = "DROP TABLE KONTAKTI;";
-			izjava.executeUpdate(query);
+			String query = "DROP TABLE KONTAKTI";
+			izjava = c.prepareStatement(query);
+			izjava.executeUpdate();
 		} catch (SQLException e) {
 			System.out.println(e.getMessage());
 		}
@@ -60,12 +61,14 @@ public class Baza {
 	public String[][] izberiTabelo() {
 		String[][] kontakti = null;
 		try {
-			String query0 = "SELECT COUNT (*) AS length FROM KONTAKTI;";
-			ResultSet rez0 = izjava.executeQuery(query0);
+			String query0 = "SELECT COUNT (*) AS length FROM KONTAKTI";
+			izjava = c.prepareStatement(query0);
+			ResultSet rez0 = izjava.executeQuery();
 			int len = rez0.getInt("length");
 			
-			String query = "SELECT * FROM KONTAKTI;";
-			ResultSet rez = izjava.executeQuery(query);
+			String query = "SELECT * FROM KONTAKTI";
+			izjava = c.prepareStatement(query);
+			ResultSet rez = izjava.executeQuery();
 			
 			kontakti = new String[len][steviloStolpcev]; 
 			
@@ -96,10 +99,16 @@ public class Baza {
 			return false;
 		}
 		try {
-			String query = String.format("INSERT INTO KONTAKTI (IME, PRIIMEK, STEVILKA, NASLOV, KRAJ, POSTA) "
-					+ "VALUES (\"%s\", \"%s\", \"%s\", \"%s\", \"%s\", \"%s\");", 
-					dIme, dPriimek, dStevilka, dNaslov, dKraj, dPosta);
-			izjava.executeUpdate(query);
+			String query = "INSERT INTO KONTAKTI (IME, PRIIMEK, STEVILKA, NASLOV, KRAJ, POSTA) "
+					+ "VALUES (?, ?, ?, ?, ?, ?)";
+			izjava = c.prepareStatement(query);
+			izjava.setString(1, dIme);
+			izjava.setString(2, dPriimek);
+			izjava.setString(3, dStevilka);
+			izjava.setString(4, dNaslov);
+			izjava.setString(5, dKraj);
+			izjava.setString(6, dPosta);
+			izjava.executeUpdate();
 		} catch (SQLException e) {
 			System.out.println(e.getMessage());
 			return false;
@@ -109,11 +118,14 @@ public class Baza {
 	
 	public boolean izbrisiKontakt(String[] dPodatki) {
 		try {
-			String query = String.format("DELETE FROM KONTAKTI WHERE IME = \"%s\" AND "
-					+ "PRIIMEK = \"%s\" AND STEVILKA = \"%s\" AND NASLOV = \"%s\" AND "
-					+ "KRAJ = \"%s\" AND POSTA = \"%s\";",
-					(Object[]) dPodatki);
-			izjava.executeUpdate(query);
+			String query = "DELETE FROM KONTAKTI WHERE IME = ? AND "
+					+ "PRIIMEK = ? AND STEVILKA = ? AND NASLOV = ? AND "
+					+ "KRAJ = ? AND POSTA = ?";
+			izjava = c.prepareStatement(query);
+			for (int i = 0; i < dPodatki.length; i++) {
+				izjava.setString(i+1, dPodatki[i]);
+			}
+			izjava.executeUpdate();
 		} catch (SQLException e) {
 			System.out.println(e.getMessage());
 			return false;
@@ -123,15 +135,21 @@ public class Baza {
 	
 	public boolean posodobiKontakt(String[] stariPodatki, String[] noviPodatki) {
 		try {
-			String[] dPodatki = new String[2 * steviloStolpcev];
-			System.arraycopy(noviPodatki, 0, dPodatki, 0, steviloStolpcev);
-			System.arraycopy(stariPodatki, 0, dPodatki, steviloStolpcev, steviloStolpcev);
-			String query = String.format("UPDATE KONTAKTI SET IME = \"%s\", PRIIMEK = \"%s\", "
-					+ "STEVILKA = \"%s\", NASLOV = \"%s\", KRAJ = \"%s\", POSTA = \"%s\" "
-					+ "WHERE IME = \"%s\" AND PRIIMEK = \"%s\" AND STEVILKA = \"%s\" "
-					+ "AND NASLOV = \"%s\" AND KRAJ = \"%s\" AND POSTA = \"%s\";", 
-					(Object[]) dPodatki);
-			izjava.executeUpdate(query);
+//			String[] dPodatki = new String[2 * steviloStolpcev];
+//			System.arraycopy(noviPodatki, 0, dPodatki, 0, steviloStolpcev);
+//			System.arraycopy(stariPodatki, 0, dPodatki, steviloStolpcev, steviloStolpcev);
+			String query = "UPDATE KONTAKTI SET IME = ?, PRIIMEK = ?, "
+					+ "STEVILKA = ?, NASLOV = ?, KRAJ = ?, POSTA = ? "
+					+ "WHERE IME = ? AND PRIIMEK = ? AND STEVILKA = ? "
+					+ "AND NASLOV = ? AND KRAJ = ? AND POSTA = ?";
+			izjava = c.prepareStatement(query);
+			for (int i = 0; i < noviPodatki.length; i++) {
+				izjava.setString(i+1, noviPodatki[i]);
+			}
+			for (int i = steviloStolpcev; i < steviloStolpcev + stariPodatki.length; i++) {
+				izjava.setString(i+1, stariPodatki[i % steviloStolpcev]);
+			}
+			izjava.executeUpdate();
 		} catch (SQLException e) {
 			System.out.println(e.getMessage());
 			return false;
