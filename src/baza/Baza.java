@@ -92,22 +92,20 @@ public class Baza {
 		return kontakti;
 	}
 	
-	public boolean dodajKontakt(String dIme, String dPriimek, String dStevilka, 
-			String dNaslov, String dKraj, String dPosta) {
-		if (dIme.length() == 0 || dPriimek.length() == 0 || dStevilka.length() == 0 ||
-				(dPosta.length() != 4 && dPosta.length() != 0)) {
+	public boolean dodajKontakt(String[] dPodatki) {
+		if (dPodatki.length != 6) {
+			return false;
+		} else if (dPodatki[0].length() == 0 || dPodatki[1].length() == 0 || dPodatki[2].length() == 0 
+				|| (dPodatki[5].length() != 4 && dPodatki[5].length() != 0)) {
 			return false;
 		}
 		try {
 			String query = "INSERT INTO KONTAKTI (IME, PRIIMEK, STEVILKA, NASLOV, KRAJ, POSTA) "
 					+ "VALUES (?, ?, ?, ?, ?, ?)";
 			izjava = c.prepareStatement(query);
-			izjava.setString(1, dIme);
-			izjava.setString(2, dPriimek);
-			izjava.setString(3, dStevilka);
-			izjava.setString(4, dNaslov);
-			izjava.setString(5, dKraj);
-			izjava.setString(6, dPosta);
+			for (int i = 0; i < dPodatki.length; i++) {
+				izjava.setString(i+1, dPodatki[i]);
+			}
 			izjava.executeUpdate();
 		} catch (SQLException e) {
 			System.out.println(e.getMessage());

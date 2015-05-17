@@ -10,6 +10,7 @@ import java.net.URL;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JEditorPane;
+import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JPanel;
@@ -25,6 +26,8 @@ import baza.Baza;
 
 @SuppressWarnings("serial")
 public class VsebinskoPodrocje extends JPanel implements ActionListener, ListSelectionListener {
+	private Dimension velikost = new Dimension(400, 300);
+	private JList<String> kontakti;
 	private JEditorPane prikazKontakta;
 	private Baza baza;
 	private String[][] seznamKontaktov;
@@ -34,14 +37,13 @@ public class VsebinskoPodrocje extends JPanel implements ActionListener, ListSel
 	static private final String IZBRISI = "izbrisi";
 	static private final String VNESEN_TEKST = "vnesen tekst";
 	
-	public VsebinskoPodrocje() {
+	public VsebinskoPodrocje(Baza danaBaza) {
 		super(new GridBagLayout());
 		
-		baza = new Baza();
-		baza.poveziSeZBazo();
+		baza = danaBaza;
 		seznamKontaktov = baza.izberiTabelo();
 		
-		setPreferredSize(new Dimension(300, 300));
+		setPreferredSize(velikost);
 		
         JToolBar toolbar = new JToolBar();
         toolbar.setFloatable(false);
@@ -75,9 +77,8 @@ public class VsebinskoPodrocje extends JPanel implements ActionListener, ListSel
         
         dodajGumbe(toolbar);
         
-        // TODO implement ListListener, extending the JSplitPane class
         String[] imena = dobiPolnaImena();
-        JList<String> kontakti = new JList<String>(imena);
+        kontakti = new JList<String>(imena);
         kontakti.setSelectionMode(ListSelectionModel.SINGLE_INTERVAL_SELECTION);
         kontakti.setSelectedIndex(0);
         kontakti.addListSelectionListener(this);
@@ -103,7 +104,6 @@ public class VsebinskoPodrocje extends JPanel implements ActionListener, ListSel
 //        System.out.println(dodaj);
 //        boolean update = baza.posodobiKontakt(novo, staro);
 //        System.out.println(update);
-        baza.zapriPovezavo();
 	}
 
 	private String[] dobiPolnaImena() {
@@ -122,10 +122,19 @@ public class VsebinskoPodrocje extends JPanel implements ActionListener, ListSel
 		String cmd = e.getActionCommand();
 		if (cmd.equals(DODAJ)) {
 			System.out.println("1" + cmd);
+			JFrame dodajKontakt = new NovKontakt("Dodaj nov kontakt", baza, true);
+			dodajKontakt.pack();
+			dodajKontakt.setVisible(true);
 		} else if (cmd.equals(UREDI)) {
 			System.out.println("2" + cmd);
+			String izbranKontakt = kontakti.getSelectedValue();
+			JFrame urediKontakt = new NovKontakt(izbranKontakt, baza, false);
+			urediKontakt.pack();
+			urediKontakt.setVisible(true);
 		} else if (cmd.equals(IZBRISI)) {
 			System.out.println("3" + cmd);
+			int izbranKontakt = kontakti.getSelectedIndex();
+			baza.izbrisiKontakt(seznamKontaktov[izbranKontakt]);
 		} else {
 			System.out.println("command not found");
 		}
