@@ -124,13 +124,14 @@ public class VsebinskoPodrocje extends JPanel implements ActionListener, ListSel
 		String cmd = e.getActionCommand();
 		if (cmd.equals(DODAJ)) {
 			System.out.println("1" + cmd);
-			JFrame dodajKontakt = new NovKontakt("Dodaj nov kontakt", baza, true);
+			JFrame dodajKontakt = new NovKontakt("Dodaj nov kontakt", baza, -1);
 			dodajKontakt.pack();
 			dodajKontakt.setVisible(true);
 		} else if (cmd.equals(UREDI)) {
 			System.out.println("2" + cmd);
 			String izbranKontakt = kontakti.getSelectedValue();
-			JFrame urediKontakt = new NovKontakt(izbranKontakt, baza, false);
+			int idIzbranegaKontakta = Integer.parseInt(seznamKontaktov[kontakti.getSelectedIndex()][6]);
+			JFrame urediKontakt = new NovKontakt(izbranKontakt, baza, idIzbranegaKontakta);
 			urediKontakt.pack();
 			urediKontakt.setVisible(true);
 		} else if (cmd.equals(IZBRISI)) {
@@ -146,7 +147,7 @@ public class VsebinskoPodrocje extends JPanel implements ActionListener, ListSel
 			        new String[]{"Da", "Ne"},
 			        "default");
 			if (potrditevBrisanja == JOptionPane.YES_OPTION) {
-				baza.izbrisiKontakt(seznamKontaktov[izbranIndeks]);
+				baza.izbrisiKontakt(Integer.parseInt(seznamKontaktov[izbranIndeks][6]));
 			}
 		} else {
 			System.out.println("command not found");

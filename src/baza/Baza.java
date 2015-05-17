@@ -58,7 +58,6 @@ public class Baza {
 		}
 	}
 	
-	// TODO vrni tudi id za lazje brisanje iz tabele
 	public String[][] izberiTabelo() {
 		String[][] kontakti = null;
 		try {
@@ -75,7 +74,7 @@ public class Baza {
 			
 			int i = 0;
 			while (rez.next()) {
-		         int id = rez.getInt("id");
+		         String id = Integer.toString(rez.getInt("id"));
 		         String ime = rez.getString("ime");
 		         String priimek = rez.getString("priimek");
 		         String stevilka = rez.getString("stevilka");
@@ -83,7 +82,7 @@ public class Baza {
 		         String kraj = rez.getString("kraj");
 		         String posta = rez.getString("posta");
 		         System.out.println(id + ime + priimek + stevilka + naslov + kraj + posta);
-		         String[] kontakt = {ime, priimek, stevilka, naslov, kraj, posta};
+		         String[] kontakt = {ime, priimek, stevilka, naslov, kraj, posta, id};
 		         kontakti[i] = kontakt;
 		         i++;
 		      }
@@ -115,15 +114,11 @@ public class Baza {
 		return true;
 	}
 	
-	public boolean izbrisiKontakt(String[] dPodatki) {
+	public boolean izbrisiKontakt(int id) {
 		try {
-			String query = "DELETE FROM KONTAKTI WHERE IME = ? AND "
-					+ "PRIIMEK = ? AND STEVILKA = ? AND NASLOV = ? AND "
-					+ "KRAJ = ? AND POSTA = ?";
+			String query = "DELETE FROM KONTAKTI WHERE ID = ?";
 			izjava = c.prepareStatement(query);
-			for (int i = 0; i < dPodatki.length; i++) {
-				izjava.setString(i+1, dPodatki[i]);
-			}
+			izjava.setInt(1, id);
 			izjava.executeUpdate();
 		} catch (SQLException e) {
 			System.out.println(e.getMessage());
@@ -132,27 +127,47 @@ public class Baza {
 		return true;
 	}
 	
-	public boolean posodobiKontakt(String[] stariPodatki, String[] noviPodatki) {
+	public boolean posodobiKontakt(int id, String[] noviPodatki) {
 		try {
 //			String[] dPodatki = new String[2 * steviloStolpcev];
 //			System.arraycopy(noviPodatki, 0, dPodatki, 0, steviloStolpcev);
 //			System.arraycopy(stariPodatki, 0, dPodatki, steviloStolpcev, steviloStolpcev);
 			String query = "UPDATE KONTAKTI SET IME = ?, PRIIMEK = ?, "
 					+ "STEVILKA = ?, NASLOV = ?, KRAJ = ?, POSTA = ? "
-					+ "WHERE IME = ? AND PRIIMEK = ? AND STEVILKA = ? "
-					+ "AND NASLOV = ? AND KRAJ = ? AND POSTA = ?";
+					+ "WHERE ID = ?";
 			izjava = c.prepareStatement(query);
 			for (int i = 0; i < noviPodatki.length; i++) {
 				izjava.setString(i+1, noviPodatki[i]);
 			}
-			for (int i = steviloStolpcev; i < steviloStolpcev + stariPodatki.length; i++) {
-				izjava.setString(i+1, stariPodatki[i % steviloStolpcev]);
-			}
+			izjava.setInt(noviPodatki.length + 1, id);
 			izjava.executeUpdate();
 		} catch (SQLException e) {
 			System.out.println(e.getMessage());
 			return false;
 		}
 		return true;
+	}
+	
+	public String[] pridobiKontakt(int id) {
+		try {
+			String query = "SELECT * FROM KONTAKTI WHERE ID = ?";
+			izjava = c.prepareStatement(query);
+			izjava.setInt(1, id);
+			ResultSet rez = izjava.executeQuery();
+			
+			String ime = rez.getString("ime");
+	        String priimek = rez.getString("priimek");
+	        String stevilka = rez.getString("stevilka");
+	        String naslov = rez.getString("naslov");
+	        String kraj = rez.getString("kraj");
+	        String posta = rez.getString("posta");
+	        String[] kontakt = {ime, priimek, stevilka, naslov, kraj, posta};
+	        
+	        rez.close();
+	        return kontakt;
+		} catch (SQLException e) {
+			System.out.println(e.getMessage());
+			return null;
+		}		
 	}
 }

@@ -19,14 +19,15 @@ public class NovKontakt extends JFrame implements ActionListener {
 	private Dimension velikost = new Dimension(300, 180);
 	private JTextField[] textfields = new JTextField[6]; 
 	private Baza baza;
-	private boolean novKontakt;  // true pomeni, da dodajamo nov kontakt; false, da posodabljamo starega
+	private int id;  // id kontakta v bazi, ki ga posodabljamo; -1, ce dodajamo nov kontakt
 	
 	static private final String SHRANI = "shrani";
 
-	public NovKontakt(String title, Baza danaBaza, boolean novo) {
+	public NovKontakt(String title, Baza danaBaza, int daniId) {
 		super(title);
 		baza = danaBaza;
-		novKontakt = novo;
+		id = daniId;
+		
 		JPanel vsebina = new JPanel();
 		add(vsebina);
 		
@@ -64,8 +65,13 @@ public class NovKontakt extends JFrame implements ActionListener {
 		c.weightx = 1;
 		c.weighty = 0;
 		c.gridx = 1;
+		
 		for (int i = 0; i < textfields.length; i++) {
 			textfields[i] = new JTextField();
+			if (id > 0) {
+				String[] danKontakt = baza.pridobiKontakt(id);
+				textfields[i].setText(danKontakt[i]);
+			}
 			c.gridy = i;
 			vsebina.add(textfields[i], c);
 		}
@@ -92,10 +98,10 @@ public class NovKontakt extends JFrame implements ActionListener {
 			for (int i = 0; i < textfields.length; i++) {
 				noviPodatki[i] = textfields[i].getText();
 			}
-			if (novKontakt) {
+			if (id < 0) {
 				baza.dodajKontakt(noviPodatki);
 			} else {
-				// baza.posodobiKontakt(stariPodatki, noviPodatki);
+				baza.posodobiKontakt(id, noviPodatki);
 			}
 			dispose();
 		}
