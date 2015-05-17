@@ -7,6 +7,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.net.URL;
 
+import javax.swing.DefaultListModel;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JEditorPane;
@@ -29,6 +30,7 @@ import baza.Baza;
 public class VsebinskoPodrocje extends JPanel implements ActionListener, ListSelectionListener {
 	private Dimension velikost = new Dimension(400, 300);
 	private JList<String> kontakti;
+	private DefaultListModel<String> model;
 	private JEditorPane prikazKontakta;
 	private Baza baza;
 	private String[][] seznamKontaktov;
@@ -79,7 +81,12 @@ public class VsebinskoPodrocje extends JPanel implements ActionListener, ListSel
         dodajGumbe(toolbar);
         
         String[] imena = dobiPolnaImena();
-        kontakti = new JList<String>(imena);
+        model = new DefaultListModel<String>();
+        for (int i = 0; i < imena.length; i++) {
+        	model.addElement(imena[i]);
+        }
+        
+        kontakti = new JList<String>(model);
         kontakti.setSelectionMode(ListSelectionModel.SINGLE_INTERVAL_SELECTION);
         kontakti.setSelectedIndex(0);
         kontakti.addListSelectionListener(this);
@@ -148,6 +155,7 @@ public class VsebinskoPodrocje extends JPanel implements ActionListener, ListSel
 			        "default");
 			if (potrditevBrisanja == JOptionPane.YES_OPTION) {
 				baza.izbrisiKontakt(Integer.parseInt(seznamKontaktov[izbranIndeks][6]));
+				posodobiSeznam();
 			}
 		} else {
 			System.out.println("command not found");
@@ -219,5 +227,17 @@ public class VsebinskoPodrocje extends JPanel implements ActionListener, ListSel
 				"Poštna številka: %s \n", 
 				(Object[]) izbranKontakt);
 		prikazKontakta.setText(zaPrikaz);
+	}
+	
+	protected void posodobiSeznam() {
+		seznamKontaktov = baza.izberiTabelo();
+		String[] imena = dobiPolnaImena();
+		kontakti.removeListSelectionListener(this);
+		model.removeAllElements();
+        for (int i = 0; i < imena.length; i++) {
+        	model.addElement(imena[i]);
+        }
+        kontakti.addListSelectionListener(this);
+        kontakti.setSelectedIndex(0);
 	}
 }
