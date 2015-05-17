@@ -58,6 +58,7 @@ public class Baza {
 		}
 	}
 	
+	// TODO vrni tudi id za lazje brisanje iz tabele
 	public String[][] izberiTabelo() {
 		String[][] kontakti = null;
 		try {
@@ -66,7 +67,7 @@ public class Baza {
 			ResultSet rez0 = izjava.executeQuery();
 			int len = rez0.getInt("length");
 			
-			String query = "SELECT * FROM KONTAKTI";
+			String query = "SELECT * FROM KONTAKTI ORDER BY PRIIMEK ASC, IME ASC";
 			izjava = c.prepareStatement(query);
 			ResultSet rez = izjava.executeQuery();
 			

@@ -13,6 +13,7 @@ import javax.swing.JEditorPane;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JList;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
@@ -116,7 +117,8 @@ public class VsebinskoPodrocje extends JPanel implements ActionListener, ListSel
 		}
 		return polnaImena;
 	}
-
+	
+	// TODO update kontakti
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		String cmd = e.getActionCommand();
@@ -133,8 +135,19 @@ public class VsebinskoPodrocje extends JPanel implements ActionListener, ListSel
 			urediKontakt.setVisible(true);
 		} else if (cmd.equals(IZBRISI)) {
 			System.out.println("3" + cmd);
-			int izbranKontakt = kontakti.getSelectedIndex();
-			baza.izbrisiKontakt(seznamKontaktov[izbranKontakt]);
+			int izbranIndeks = kontakti.getSelectedIndex();
+			String izbranKontakt = kontakti.getSelectedValue();
+			int potrditevBrisanja = JOptionPane.showOptionDialog(this.getParent(), 
+					"Ali ste prepričani, da želite izbrisati kontakt " + izbranKontakt + "?", 
+					"Izbriši " + izbranKontakt,
+					JOptionPane.YES_NO_OPTION,
+					JOptionPane.QUESTION_MESSAGE,
+					null, 
+			        new String[]{"Da", "Ne"},
+			        "default");
+			if (potrditevBrisanja == JOptionPane.YES_OPTION) {
+				baza.izbrisiKontakt(seznamKontaktov[izbranIndeks]);
+			}
 		} else {
 			System.out.println("command not found");
 		}
