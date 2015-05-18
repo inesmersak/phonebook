@@ -4,12 +4,12 @@ import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.Vector;
 
 
 public class Baza {
 	private Connection c;
 	private PreparedStatement izjava = null;
-	private int steviloStolpcev = 6; // stevilo stolpcev v bazi
 	
 	public void poveziSeZBazo() {
 		c = null;
@@ -58,21 +58,15 @@ public class Baza {
 		}
 	}
 	
-	public String[][] izberiTabelo() {
-		String[][] kontakti = null;
+	public Vector<String[]> izberiTabelo() {
+		Vector<String[]> kontakti = null;
 		try {
-			String query0 = "SELECT COUNT (*) AS length FROM KONTAKTI";
-			izjava = c.prepareStatement(query0);
-			ResultSet rez0 = izjava.executeQuery();
-			int len = rez0.getInt("length");
-			
 			String query = "SELECT * FROM KONTAKTI ORDER BY PRIIMEK ASC, IME ASC";
 			izjava = c.prepareStatement(query);
 			ResultSet rez = izjava.executeQuery();
 			
-			kontakti = new String[len][steviloStolpcev]; 
+			kontakti = new Vector<String[]>(); 
 			
-			int i = 0;
 			while (rez.next()) {
 		         String id = Integer.toString(rez.getInt("id"));
 		         String ime = rez.getString("ime");
@@ -83,8 +77,7 @@ public class Baza {
 		         String posta = rez.getString("posta");
 		         System.out.println(id + ime + priimek + stevilka + naslov + kraj + posta);
 		         String[] kontakt = {ime, priimek, stevilka, naslov, kraj, posta, id};
-		         kontakti[i] = kontakt;
-		         i++;
+		         kontakti.add(kontakt);
 		      }
 		} catch (SQLException e) {
 			System.out.println(e.getMessage());
@@ -129,9 +122,6 @@ public class Baza {
 	
 	public boolean posodobiKontakt(int id, String[] noviPodatki) {
 		try {
-//			String[] dPodatki = new String[2 * steviloStolpcev];
-//			System.arraycopy(noviPodatki, 0, dPodatki, 0, steviloStolpcev);
-//			System.arraycopy(stariPodatki, 0, dPodatki, steviloStolpcev, steviloStolpcev);
 			String query = "UPDATE KONTAKTI SET IME = ?, PRIIMEK = ?, "
 					+ "STEVILKA = ?, NASLOV = ?, KRAJ = ?, POSTA = ? "
 					+ "WHERE ID = ?";

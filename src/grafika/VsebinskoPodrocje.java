@@ -6,6 +6,7 @@ import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.net.URL;
+import java.util.Vector;
 
 import javax.swing.DefaultListModel;
 import javax.swing.ImageIcon;
@@ -33,7 +34,7 @@ public class VsebinskoPodrocje extends JPanel implements ActionListener, ListSel
 	private DefaultListModel<String> model;
 	private JEditorPane prikazKontakta;
 	private Baza baza;
-	private String[][] seznamKontaktov;
+	private Vector<String[]> seznamKontaktov;
 	
 	static private final String DODAJ = "dodaj";
 	static private final String UREDI = "uredi";
@@ -115,7 +116,7 @@ public class VsebinskoPodrocje extends JPanel implements ActionListener, ListSel
 	}
 
 	private String[] dobiPolnaImena() {
-		String[] polnaImena = new String[seznamKontaktov.length];
+		String[] polnaImena = new String[seznamKontaktov.size()];
 		int i = 0;
 		for(String[] vrs : seznamKontaktov) {
 			String polnoIme = vrs[0] + " " + vrs[1];
@@ -137,7 +138,8 @@ public class VsebinskoPodrocje extends JPanel implements ActionListener, ListSel
 		} else if (cmd.equals(UREDI)) {
 			System.out.println("2" + cmd);
 			String izbranKontakt = kontakti.getSelectedValue();
-			int idIzbranegaKontakta = Integer.parseInt(seznamKontaktov[kontakti.getSelectedIndex()][6]);
+			int idIzbranegaKontakta = Integer.parseInt(
+					seznamKontaktov.elementAt(kontakti.getSelectedIndex()) [6]);
 			JFrame urediKontakt = new NovKontakt(izbranKontakt, baza, idIzbranegaKontakta);
 			urediKontakt.pack();
 			urediKontakt.setVisible(true);
@@ -154,7 +156,7 @@ public class VsebinskoPodrocje extends JPanel implements ActionListener, ListSel
 			        new String[]{"Da", "Ne"},
 			        "default");
 			if (potrditevBrisanja == JOptionPane.YES_OPTION) {
-				baza.izbrisiKontakt(Integer.parseInt(seznamKontaktov[izbranIndeks][6]));
+				baza.izbrisiKontakt(Integer.parseInt(seznamKontaktov.elementAt(izbranIndeks) [6]));
 				posodobiSeznam();
 			}
 		} else {
@@ -218,7 +220,7 @@ public class VsebinskoPodrocje extends JPanel implements ActionListener, ListSel
 	 * Ob kliku na drug kontakt zamenja prikaz na desni strani.
 	 */
 	private void posodobiPrikaz(int indeks) {
-		String[] izbranKontakt = seznamKontaktov[indeks];
+		String[] izbranKontakt = seznamKontaktov.elementAt(indeks);
 		String zaPrikaz = String.format("Ime: %s \n" +
 				"Priimek: %s \n" +
 				"Telefonska številka: %s \n" +
