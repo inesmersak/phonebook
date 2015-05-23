@@ -126,7 +126,6 @@ public class VsebinskoPodrocje extends JPanel implements ActionListener, ListSel
 		return polnaImena;
 	}
 	
-	// TODO update kontakti
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		String cmd = e.getActionCommand();
@@ -232,7 +231,6 @@ public class VsebinskoPodrocje extends JPanel implements ActionListener, ListSel
 		JList<String> kliknjenSeznam = (JList<String>) e.getSource();
 		int ind = kliknjenSeznam.getSelectedIndex();
 		posodobiPrikaz(ind);
-		System.out.println(ind);
 	}
 	
 	/**

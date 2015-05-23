@@ -80,7 +80,6 @@ public class NovKontakt extends JFrame implements ActionListener {
 		c = new GridBagConstraints();
 		shrani = new JButton("Shrani");
 		shrani.setActionCommand(SHRANI);
-//		shrani.addActionListener(this);
 		c.fill = GridBagConstraints.NONE;
 		c.anchor = GridBagConstraints.EAST;
 		c.weightx = 0;
