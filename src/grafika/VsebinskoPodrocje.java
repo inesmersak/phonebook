@@ -12,7 +12,6 @@ import javax.swing.DefaultListModel;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JEditorPane;
-import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JOptionPane;
@@ -35,6 +34,7 @@ public class VsebinskoPodrocje extends JPanel implements ActionListener, ListSel
 	private JEditorPane prikazKontakta;
 	private Baza baza;
 	private Vector<String[]> seznamKontaktov;
+	private NovKontakt oknoKontakta;
 	
 	static private final String DODAJ = "dodaj";
 	static private final String UREDI = "uredi";
@@ -132,17 +132,19 @@ public class VsebinskoPodrocje extends JPanel implements ActionListener, ListSel
 		String cmd = e.getActionCommand();
 		if (cmd.equals(DODAJ)) {
 			System.out.println("1" + cmd);
-			JFrame dodajKontakt = new NovKontakt("Dodaj nov kontakt", baza, -1);
-			dodajKontakt.pack();
-			dodajKontakt.setVisible(true);
+			oknoKontakta = new NovKontakt("Dodaj nov kontakt", baza, -1);
+			oknoKontakta.shrani.addActionListener(this);
+			oknoKontakta.pack();
+			oknoKontakta.setVisible(true);
 		} else if (cmd.equals(UREDI)) {
 			System.out.println("2" + cmd);
 			String izbranKontakt = kontakti.getSelectedValue();
 			int idIzbranegaKontakta = Integer.parseInt(
 					seznamKontaktov.elementAt(kontakti.getSelectedIndex()) [6]);
-			JFrame urediKontakt = new NovKontakt(izbranKontakt, baza, idIzbranegaKontakta);
-			urediKontakt.pack();
-			urediKontakt.setVisible(true);
+			oknoKontakta = new NovKontakt(izbranKontakt, baza, idIzbranegaKontakta);
+			oknoKontakta.shrani.addActionListener(this);
+			oknoKontakta.pack();
+			oknoKontakta.setVisible(true);
 		} else if (cmd.equals(IZBRISI)) {
 			System.out.println("3" + cmd);
 			int izbranIndeks = kontakti.getSelectedIndex();
@@ -159,6 +161,18 @@ public class VsebinskoPodrocje extends JPanel implements ActionListener, ListSel
 				baza.izbrisiKontakt(Integer.parseInt(seznamKontaktov.elementAt(izbranIndeks) [6]));
 				posodobiSeznam();
 			}
+		} else if (cmd.equals(NovKontakt.SHRANI)) {
+			String[] noviPodatki = new String[oknoKontakta.textfields.length];
+			for (int i = 0; i < oknoKontakta.textfields.length; i++) {
+				noviPodatki[i] = oknoKontakta.textfields[i].getText();
+			}
+			if (oknoKontakta.id < 0) {
+				baza.dodajKontakt(noviPodatki);
+			} else {
+				baza.posodobiKontakt(oknoKontakta.id, noviPodatki);
+			}
+			posodobiSeznam();
+			oknoKontakta.dispose();
 		} else {
 			System.out.println("command not found");
 		}
@@ -233,13 +247,14 @@ public class VsebinskoPodrocje extends JPanel implements ActionListener, ListSel
 	
 	protected void posodobiSeznam() {
 		seznamKontaktov = baza.izberiTabelo();
+		DefaultListModel<String> novModel = new DefaultListModel<String>();
 		String[] imena = dobiPolnaImena();
-		kontakti.removeListSelectionListener(this);
-		model.removeAllElements();
-        for (int i = 0; i < imena.length; i++) {
-        	model.addElement(imena[i]);
+		for (int i = 0; i < imena.length; i++) {
+        	novModel.addElement(imena[i]);
         }
-        kontakti.addListSelectionListener(this);
+		kontakti.removeListSelectionListener(this);
+		kontakti.setModel(novModel);
+		kontakti.addListSelectionListener(this);
         kontakti.setSelectedIndex(0);
 	}
 }

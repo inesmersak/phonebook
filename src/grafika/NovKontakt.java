@@ -17,11 +17,12 @@ import baza.Baza;
 @SuppressWarnings("serial")
 public class NovKontakt extends JFrame implements ActionListener {
 	private Dimension velikost = new Dimension(300, 180);
-	private JTextField[] textfields = new JTextField[6]; 
+	protected JTextField[] textfields = new JTextField[6]; 
 	private Baza baza;
-	private int id;  // id kontakta v bazi, ki ga posodabljamo; -1, ce dodajamo nov kontakt
+	protected int id;  // id kontakta v bazi, ki ga posodabljamo; -1, ce dodajamo nov kontakt
+	protected JButton shrani;
 	
-	static private final String SHRANI = "shrani";
+	static protected final String SHRANI = "shrani";
 
 	public NovKontakt(String title, Baza danaBaza, int daniId) {
 		super(title);
@@ -77,9 +78,9 @@ public class NovKontakt extends JFrame implements ActionListener {
 		}
 		
 		c = new GridBagConstraints();
-		JButton shrani = new JButton("Shrani");
+		shrani = new JButton("Shrani");
 		shrani.setActionCommand(SHRANI);
-		shrani.addActionListener(this);
+//		shrani.addActionListener(this);
 		c.fill = GridBagConstraints.NONE;
 		c.anchor = GridBagConstraints.EAST;
 		c.weightx = 0;
