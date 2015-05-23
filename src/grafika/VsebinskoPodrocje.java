@@ -166,13 +166,19 @@ public class VsebinskoPodrocje extends JPanel implements ActionListener, ListSel
 			for (int i = 0; i < oknoKontakta.textfields.length; i++) {
 				noviPodatki[i] = oknoKontakta.textfields[i].getText();
 			}
-			if (oknoKontakta.id < 0) {
-				baza.dodajKontakt(noviPodatki);
+			if (noviPodatki[0].length() == 0 || noviPodatki[1].length() == 0 || noviPodatki[2].length() == 0) {
+				JOptionPane.showMessageDialog(oknoKontakta.getParent(), 
+						"Polja 'Ime', 'Priimek' in 'Telefonska številka' so obvezna!", 
+						"Manjkajoči podatki", JOptionPane.ERROR_MESSAGE);
 			} else {
-				baza.posodobiKontakt(oknoKontakta.id, noviPodatki);
+				if (oknoKontakta.id < 0) {
+					baza.dodajKontakt(noviPodatki);
+				} else {
+					baza.posodobiKontakt(oknoKontakta.id, noviPodatki);
+				}
+				posodobiSeznam();
+				oknoKontakta.dispose();
 			}
-			posodobiSeznam();
-			oknoKontakta.dispose();
 		} else {
 			System.out.println("command not found");
 		}
