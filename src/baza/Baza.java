@@ -57,7 +57,7 @@ public class Baza {
 			System.out.println(e.getMessage());
 		}
 	}
-	
+		
 	public Vector<String[]> izberiTabelo() {
 		Vector<String[]> kontakti = null;
 		try {

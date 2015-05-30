@@ -24,6 +24,7 @@ public class NovKontakt extends JFrame implements ActionListener {
 	
 	static protected final String SHRANI = "shrani";
 
+	//TODO modal dialog
 	public NovKontakt(String title, Baza danaBaza, int daniId) {
 		super(title);
 		baza = danaBaza;

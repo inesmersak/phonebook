@@ -35,6 +35,7 @@ public class VsebinskoPodrocje extends JPanel implements ActionListener, ListSel
 	private Baza baza;
 	private Vector<String[]> seznamKontaktov;
 	private NovKontakt oknoKontakta;
+	private JTextField iskalnik;
 	
 	static private final String DODAJ = "dodaj";
 	static private final String UREDI = "uredi";
@@ -73,7 +74,7 @@ public class VsebinskoPodrocje extends JPanel implements ActionListener, ListSel
         c1.anchor = GridBagConstraints.CENTER;
         toolbar.add(isci, c1);
         
-        JTextField iskalnik = new JTextField();
+        iskalnik = new JTextField();
         iskalnik.setActionCommand(VNESEN_TEKST);
         iskalnik.addActionListener(this);
         c1.gridy = 1;
@@ -158,7 +159,7 @@ public class VsebinskoPodrocje extends JPanel implements ActionListener, ListSel
 			        "default");
 			if (potrditevBrisanja == JOptionPane.YES_OPTION) {
 				baza.izbrisiKontakt(Integer.parseInt(seznamKontaktov.elementAt(izbranIndeks) [6]));
-				posodobiSeznam();
+				posodobiSeznam(true);
 			}
 		} else if (cmd.equals(NovKontakt.SHRANI)) {
 			String[] noviPodatki = new String[oknoKontakta.textfields.length];
@@ -175,9 +176,11 @@ public class VsebinskoPodrocje extends JPanel implements ActionListener, ListSel
 				} else {
 					baza.posodobiKontakt(oknoKontakta.id, noviPodatki);
 				}
-				posodobiSeznam();
+				posodobiSeznam(true);
 				oknoKontakta.dispose();
 			}
+		} else if (cmd.equals(VNESEN_TEKST)) {
+			posodobiSeznam(false);
 		} else {
 			System.out.println("command not found");
 		}
@@ -249,12 +252,19 @@ public class VsebinskoPodrocje extends JPanel implements ActionListener, ListSel
 		prikazKontakta.setText(zaPrikaz);
 	}
 	
-	protected void posodobiSeznam() {
-		seznamKontaktov = baza.izberiTabelo();
+	private void posodobiSeznam(boolean spremembaBaze) {
+		if (spremembaBaze) { 
+			seznamKontaktov = baza.izberiTabelo();
+			iskalnik.setText("");
+			}
+		String poizvedba = iskalnik.getText().toLowerCase();
 		DefaultListModel<String> novModel = new DefaultListModel<String>();
 		String[] imena = dobiPolnaImena();
 		for (int i = 0; i < imena.length; i++) {
-        	novModel.addElement(imena[i]);
+			String ime = imena[i];
+			if (ime.toLowerCase().contains(poizvedba)) {
+				novModel.addElement(ime);
+			}			
         }
 		kontakti.removeListSelectionListener(this);
 		kontakti.setModel(novModel);
