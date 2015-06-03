@@ -1,5 +1,6 @@
 package grafika;
 
+import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
@@ -37,6 +38,9 @@ public class VsebinskoPodrocje extends JPanel implements ActionListener, ListSel
 	private Vector<String[]> seznamTrenutnihKontaktov;
 	private NovKontakt oknoKontakta;
 	private JTextField iskalnik;
+	private Color barvaToolbara;
+	private Color barvaGumbov;
+	private Color barvaSeznamov;
 	
 	static private final String DODAJ = "dodaj";
 	static private final String UREDI = "uredi";
@@ -52,10 +56,15 @@ public class VsebinskoPodrocje extends JPanel implements ActionListener, ListSel
 		
 		setPreferredSize(velikost);
 		
+		barvaToolbara = new Color(180, 175, 204);
+		barvaGumbov = new Color(215, 213, 224);
+		barvaSeznamov = new Color(215, 213, 224);
+		
         JToolBar toolbar = new JToolBar();
         toolbar.setFloatable(false);
         toolbar.setRollover(true);
         toolbar.setLayout(new GridBagLayout());
+        toolbar.setBackground(barvaToolbara);
         
         GridBagConstraints c = new GridBagConstraints();
         c.fill = GridBagConstraints.HORIZONTAL;
@@ -94,9 +103,11 @@ public class VsebinskoPodrocje extends JPanel implements ActionListener, ListSel
         kontakti.setSelectionMode(ListSelectionModel.SINGLE_INTERVAL_SELECTION);
         kontakti.setSelectedIndex(0);
         kontakti.addListSelectionListener(this);
+        kontakti.setBackground(barvaSeznamov);
         
         prikazKontakta = new JEditorPane();
         posodobiPrikaz(0);
+        kontakti.setBackground(barvaSeznamov);
         
         JScrollPane kontaktiScrollPane = new JScrollPane(kontakti);
         JScrollPane prikazScrollPane = new JScrollPane(prikazKontakta);
@@ -193,6 +204,7 @@ public class VsebinskoPodrocje extends JPanel implements ActionListener, ListSel
 		gumb.setActionCommand(actionCommand);
 		gumb.setToolTipText(altTekst);
 		gumb.addActionListener(this);
+		gumb.setBackground(barvaGumbov);
 		
 		String potSlike = "/" + imeSlike + ".png";
 		URL urlSlike = VsebinskoPodrocje.class.getResource(potSlike);

@@ -1,5 +1,6 @@
 package grafika;
 
+import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.GridBagConstraints;
@@ -36,6 +37,7 @@ public class NovKontakt extends JFrame implements ActionListener {
 		
 		vsebina.setPreferredSize(velikost);
 		vsebina.setLayout(new GridBagLayout());
+		vsebina.setBackground(new Color(231, 219, 255));
 		
 		GridBagConstraints c = new GridBagConstraints();
 		JLabel imeLabel = new JLabel("Ime: *");
