@@ -33,7 +33,8 @@ public class VsebinskoPodrocje extends JPanel implements ActionListener, ListSel
 	private DefaultListModel<String> model;
 	private JEditorPane prikazKontakta;
 	private Baza baza;
-	private Vector<String[]> seznamKontaktov;
+	private Vector<String[]> seznamVsehKontaktov;
+	private Vector<String[]> seznamTrenutnihKontaktov;
 	private NovKontakt oknoKontakta;
 	private JTextField iskalnik;
 	
@@ -46,7 +47,8 @@ public class VsebinskoPodrocje extends JPanel implements ActionListener, ListSel
 		super(new GridBagLayout());
 		
 		baza = danaBaza;
-		seznamKontaktov = baza.izberiTabelo();
+		seznamVsehKontaktov = baza.izberiTabelo();
+		seznamTrenutnihKontaktov = baza.izberiTabelo();
 		
 		setPreferredSize(velikost);
 		
@@ -117,16 +119,16 @@ public class VsebinskoPodrocje extends JPanel implements ActionListener, ListSel
 	}
 
 	private String[] dobiPolnaImena() {
-		String[] polnaImena = new String[seznamKontaktov.size()];
+		String[] polnaImena = new String[seznamVsehKontaktov.size()];
 		int i = 0;
-		for(String[] vrs : seznamKontaktov) {
+		for(String[] vrs : seznamVsehKontaktov) {
 			String polnoIme = vrs[0] + " " + vrs[1];
 			polnaImena[i] = polnoIme;
 			i++;
 		}
 		return polnaImena;
 	}
-	
+		
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		String cmd = e.getActionCommand();
@@ -140,7 +142,7 @@ public class VsebinskoPodrocje extends JPanel implements ActionListener, ListSel
 			System.out.println("2" + cmd);
 			String izbranKontakt = kontakti.getSelectedValue();
 			int idIzbranegaKontakta = Integer.parseInt(
-					seznamKontaktov.elementAt(kontakti.getSelectedIndex()) [6]);
+					seznamTrenutnihKontaktov.elementAt(kontakti.getSelectedIndex()) [6]);
 			oknoKontakta = new NovKontakt(izbranKontakt, baza, idIzbranegaKontakta);
 			oknoKontakta.shrani.addActionListener(this);
 			oknoKontakta.pack();
@@ -158,7 +160,7 @@ public class VsebinskoPodrocje extends JPanel implements ActionListener, ListSel
 			        new String[]{"Da", "Ne"},
 			        "default");
 			if (potrditevBrisanja == JOptionPane.YES_OPTION) {
-				baza.izbrisiKontakt(Integer.parseInt(seznamKontaktov.elementAt(izbranIndeks) [6]));
+				baza.izbrisiKontakt(Integer.parseInt(seznamTrenutnihKontaktov.elementAt(izbranIndeks) [6]));
 				posodobiSeznam(true);
 			}
 		} else if (cmd.equals(NovKontakt.SHRANI)) {
@@ -241,7 +243,7 @@ public class VsebinskoPodrocje extends JPanel implements ActionListener, ListSel
 	 * Ob kliku na drug kontakt zamenja prikaz na desni strani.
 	 */
 	private void posodobiPrikaz(int indeks) {
-		String[] izbranKontakt = seznamKontaktov.elementAt(indeks);
+		String[] izbranKontakt = seznamTrenutnihKontaktov.elementAt(indeks);
 		String zaPrikaz = String.format("Ime: %s \n" +
 				"Priimek: %s \n" +
 				"Telefonska številka: %s \n" +
@@ -252,19 +254,23 @@ public class VsebinskoPodrocje extends JPanel implements ActionListener, ListSel
 		prikazKontakta.setText(zaPrikaz);
 	}
 	
+	// TODO po urejanju ali dodajanju kontakta prikazi ta kontakt
+	
 	private void posodobiSeznam(boolean spremembaBaze) {
 		if (spremembaBaze) { 
-			seznamKontaktov = baza.izberiTabelo();
+			seznamVsehKontaktov = baza.izberiTabelo();
 			iskalnik.setText("");
 			}
 		String poizvedba = iskalnik.getText().toLowerCase();
 		DefaultListModel<String> novModel = new DefaultListModel<String>();
+		seznamTrenutnihKontaktov.removeAllElements();
 		String[] imena = dobiPolnaImena();
 		for (int i = 0; i < imena.length; i++) {
 			String ime = imena[i];
 			if (ime.toLowerCase().contains(poizvedba)) {
+				seznamTrenutnihKontaktov.add(seznamVsehKontaktov.elementAt(i));
 				novModel.addElement(ime);
-			}			
+			}
         }
 		kontakti.removeListSelectionListener(this);
 		kontakti.setModel(novModel);

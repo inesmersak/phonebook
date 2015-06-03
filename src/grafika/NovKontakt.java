@@ -1,6 +1,7 @@
 package grafika;
 
 import java.awt.Dimension;
+import java.awt.Font;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
@@ -37,9 +38,9 @@ public class NovKontakt extends JFrame implements ActionListener {
 		vsebina.setLayout(new GridBagLayout());
 		
 		GridBagConstraints c = new GridBagConstraints();
-		JLabel imeLabel = new JLabel("Ime: ");
-		JLabel priimekLabel = new JLabel("Priimek: ");
-		JLabel stevilkaLabel = new JLabel("Telefonska številka: ");
+		JLabel imeLabel = new JLabel("Ime: *");
+		JLabel priimekLabel = new JLabel("Priimek: *");
+		JLabel stevilkaLabel = new JLabel("Telefonska številka: *");
 		JLabel naslovLabel = new JLabel("Naslov: ");
 		JLabel krajLabel = new JLabel("Kraj: ");
 		JLabel postaLabel = new JLabel("Poštna številka: ");
@@ -79,14 +80,25 @@ public class NovKontakt extends JFrame implements ActionListener {
 		}
 		
 		c = new GridBagConstraints();
+		JLabel obvezna_polja = new JLabel("Polja z * so obvezna!");
+		System.out.println(obvezna_polja.getFont().getFontName());
+		obvezna_polja.setFont(new Font("Dialog", Font.PLAIN, 10));
+		c.fill = GridBagConstraints.NONE;
+		c.anchor = GridBagConstraints.WEST;
+		c.weightx = 0;
+		c.weighty = 0;
+		c.gridx = 0;
+		c.gridy = 6;
+		vsebina.add(obvezna_polja, c);
+		
+		c = new GridBagConstraints();
 		shrani = new JButton("Shrani");
 		shrani.setActionCommand(SHRANI);
 		c.fill = GridBagConstraints.NONE;
 		c.anchor = GridBagConstraints.EAST;
 		c.weightx = 0;
 		c.weighty = 0;
-		c.gridx = 0;
-		c.gridwidth = 2;
+		c.gridx = 1;
 		c.gridy = 6;
 		vsebina.add(shrani, c);
 		
