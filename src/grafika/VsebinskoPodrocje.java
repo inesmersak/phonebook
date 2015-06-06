@@ -13,6 +13,7 @@ import javax.swing.DefaultListModel;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JEditorPane;
+import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JOptionPane;
@@ -29,6 +30,7 @@ import baza.Baza;
 
 @SuppressWarnings("serial")
 public class VsebinskoPodrocje extends JPanel implements ActionListener, ListSelectionListener {
+	private JFrame parentFrame;
 	private Dimension velikost = new Dimension(400, 300);
 	private JList<String> kontakti;
 	private DefaultListModel<String> model;
@@ -47,8 +49,10 @@ public class VsebinskoPodrocje extends JPanel implements ActionListener, ListSel
 	static private final String IZBRISI = "izbrisi";
 	static private final String VNESEN_TEKST = "vnesen tekst";
 	
-	public VsebinskoPodrocje(Baza danaBaza) {
+	public VsebinskoPodrocje(JFrame parent, Baza danaBaza) {
 		super(new GridBagLayout());
+		
+		parentFrame = parent;
 		
 		baza = danaBaza;
 		seznamVsehKontaktov = baza.izberiTabelo();
@@ -145,7 +149,7 @@ public class VsebinskoPodrocje extends JPanel implements ActionListener, ListSel
 		String cmd = e.getActionCommand();
 		if (cmd.equals(DODAJ)) {
 			System.out.println("1" + cmd);
-			oknoKontakta = new NovKontakt("Dodaj nov kontakt", baza, -1);
+			oknoKontakta = new NovKontakt(parentFrame, "Dodaj nov kontakt", baza, -1);
 			oknoKontakta.shrani.addActionListener(this);
 			oknoKontakta.pack();
 			oknoKontakta.setVisible(true);
@@ -154,7 +158,7 @@ public class VsebinskoPodrocje extends JPanel implements ActionListener, ListSel
 			String izbranKontakt = kontakti.getSelectedValue();
 			int idIzbranegaKontakta = Integer.parseInt(
 					seznamTrenutnihKontaktov.elementAt(kontakti.getSelectedIndex()) [6]);
-			oknoKontakta = new NovKontakt(izbranKontakt, baza, idIzbranegaKontakta);
+			oknoKontakta = new NovKontakt(parentFrame, izbranKontakt, baza, idIzbranegaKontakta);
 			oknoKontakta.shrani.addActionListener(this);
 			oknoKontakta.pack();
 			oknoKontakta.setVisible(true);

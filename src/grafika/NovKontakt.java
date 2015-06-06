@@ -9,6 +9,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 import javax.swing.JButton;
+import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -17,7 +18,7 @@ import javax.swing.JTextField;
 import baza.Baza;
 
 @SuppressWarnings("serial")
-public class NovKontakt extends JFrame implements ActionListener {
+public class NovKontakt extends JDialog implements ActionListener {
 	private Dimension velikost = new Dimension(300, 180);
 	protected JTextField[] textfields = new JTextField[6]; 
 	private Baza baza;
@@ -26,9 +27,8 @@ public class NovKontakt extends JFrame implements ActionListener {
 	
 	static protected final String SHRANI = "shrani";
 
-	//TODO modal dialog
-	public NovKontakt(String title, Baza danaBaza, int daniId) {
-		super(title);
+	public NovKontakt(JFrame parentFrame, String title, Baza danaBaza, int daniId) {
+		super(parentFrame, title, true);
 		baza = danaBaza;
 		id = daniId;
 		

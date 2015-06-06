@@ -11,7 +11,7 @@ public class GlavnoOkno extends JFrame {
 		super("Telefonski imenik");
 		final Baza baza = new Baza();
 		baza.poveziSeZBazo();
-		JPanel vsebina = new VsebinskoPodrocje(baza);
+		JPanel vsebina = new VsebinskoPodrocje((JFrame) this, baza);
 		add(vsebina);
 		addWindowListener(new java.awt.event.WindowAdapter() {
 		    @Override
