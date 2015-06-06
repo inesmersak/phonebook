@@ -192,14 +192,23 @@ public class VsebinskoPodrocje extends JPanel implements ActionListener, ListSel
 				if (oknoKontakta.id < 0) {
 					int id = baza.dodajKontakt(noviPodatki);
 					if (id == -1) {
-						// TODO error dialog
+						// TODO zakaj ni uspesno - dolzina postne stevilke etc.
+						JOptionPane.showMessageDialog(this, 
+								"Dodajanje kontakta ni uspelo!", 
+								"Kontakt ni bil dodan", JOptionPane.ERROR_MESSAGE);
 					}
 					else {
 						idZaPrikaz = id;
 					}
 				} else {
-					baza.posodobiKontakt(oknoKontakta.id, noviPodatki);
-					idZaPrikaz = oknoKontakta.id;
+					boolean uspesno = baza.posodobiKontakt(oknoKontakta.id, noviPodatki);
+					if (uspesno) {
+						idZaPrikaz = oknoKontakta.id;
+					} else {
+						JOptionPane.showMessageDialog(this, 
+								"Urejanje kontakta ni uspelo!", 
+								"Kontakt ni bil urejen", JOptionPane.ERROR_MESSAGE);
+					}
 				}
 				posodobiSeznam(true, idZaPrikaz);
 				oknoKontakta.dispose();
