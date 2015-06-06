@@ -176,7 +176,7 @@ public class VsebinskoPodrocje extends JPanel implements ActionListener, ListSel
 			        "default");
 			if (potrditevBrisanja == JOptionPane.YES_OPTION) {
 				baza.izbrisiKontakt(Integer.parseInt(seznamTrenutnihKontaktov.elementAt(izbranIndeks) [6]));
-				posodobiSeznam(true);
+				posodobiSeznam(true, 0);
 			}
 		} else if (cmd.equals(NovKontakt.SHRANI)) {
 			String[] noviPodatki = new String[oknoKontakta.textfields.length];
@@ -188,16 +188,24 @@ public class VsebinskoPodrocje extends JPanel implements ActionListener, ListSel
 						"Polja 'Ime', 'Priimek' in 'Telefonska številka' so obvezna!", 
 						"Manjkajoči podatki", JOptionPane.ERROR_MESSAGE);
 			} else {
+				int idZaPrikaz = 0;
 				if (oknoKontakta.id < 0) {
-					baza.dodajKontakt(noviPodatki);
+					int id = baza.dodajKontakt(noviPodatki);
+					if (id == -1) {
+						// TODO error dialog
+					}
+					else {
+						idZaPrikaz = id;
+					}
 				} else {
 					baza.posodobiKontakt(oknoKontakta.id, noviPodatki);
+					idZaPrikaz = oknoKontakta.id;
 				}
-				posodobiSeznam(true);
+				posodobiSeznam(true, idZaPrikaz);
 				oknoKontakta.dispose();
 			}
 		} else if (cmd.equals(VNESEN_TEKST)) {
-			posodobiSeznam(false);
+			posodobiSeznam(false, 0);
 		} else {
 			System.out.println("command not found");
 		}
@@ -269,10 +277,8 @@ public class VsebinskoPodrocje extends JPanel implements ActionListener, ListSel
 				(Object[]) izbranKontakt);
 		prikazKontakta.setText(zaPrikaz);
 	}
-	
-	// TODO po urejanju ali dodajanju kontakta prikazi ta kontakt
-	
-	private void posodobiSeznam(boolean spremembaBaze) {
+		
+	private void posodobiSeznam(boolean spremembaBaze, int id) {
 		if (spremembaBaze) { 
 			seznamVsehKontaktov = baza.izberiTabelo();
 			iskalnik.setText("");
@@ -281,16 +287,21 @@ public class VsebinskoPodrocje extends JPanel implements ActionListener, ListSel
 		DefaultListModel<String> novModel = new DefaultListModel<String>();
 		seznamTrenutnihKontaktov.removeAllElements();
 		String[] imena = dobiPolnaImena();
+		int prikaz = 0;
 		for (int i = 0; i < imena.length; i++) {
 			String ime = imena[i];
 			if (ime.toLowerCase().contains(poizvedba)) {
-				seznamTrenutnihKontaktov.add(seznamVsehKontaktov.elementAt(i));
+				String[] kontakt = seznamVsehKontaktov.elementAt(i);
+				seznamTrenutnihKontaktov.add(kontakt);
 				novModel.addElement(ime);
+				if (Integer.parseInt(kontakt[kontakt.length-1]) == id) {
+					prikaz = novModel.getSize() - 1;
+				}
 			}
         }
 		kontakti.removeListSelectionListener(this);
 		kontakti.setModel(novModel);
 		kontakti.addListSelectionListener(this);
-        kontakti.setSelectedIndex(0);
+        kontakti.setSelectedIndex(prikaz);
 	}
 }

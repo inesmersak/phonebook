@@ -5,9 +5,6 @@ import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-
 import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
@@ -18,7 +15,7 @@ import javax.swing.JTextField;
 import baza.Baza;
 
 @SuppressWarnings("serial")
-public class NovKontakt extends JDialog implements ActionListener {
+public class NovKontakt extends JDialog {
 	private Dimension velikost = new Dimension(300, 180);
 	protected JTextField[] textfields = new JTextField[6]; 
 	private Baza baza;
@@ -106,20 +103,20 @@ public class NovKontakt extends JDialog implements ActionListener {
 		
 	}
 
-	@Override
-	public void actionPerformed(ActionEvent e) {
-		if (e.getActionCommand().equals(SHRANI)) {
-			String[] noviPodatki = new String[textfields.length];
-			for (int i = 0; i < textfields.length; i++) {
-				noviPodatki[i] = textfields[i].getText();
-			}
-			if (id < 0) {
-				baza.dodajKontakt(noviPodatki);
-			} else {
-				baza.posodobiKontakt(id, noviPodatki);
-			}
-			dispose();
-		}
-	}
+//	@Override
+//	public void actionPerformed(ActionEvent e) {
+//		if (e.getActionCommand().equals(SHRANI)) {
+//			String[] noviPodatki = new String[textfields.length];
+//			for (int i = 0; i < textfields.length; i++) {
+//				noviPodatki[i] = textfields[i].getText();
+//			}
+//			if (id < 0) {
+//				baza.dodajKontakt(noviPodatki);
+//			} else {
+//				baza.posodobiKontakt(id, noviPodatki);
+//			}
+//			dispose();
+//		}
+//	}
 	
 }

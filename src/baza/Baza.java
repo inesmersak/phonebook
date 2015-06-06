@@ -4,6 +4,7 @@ import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.Vector;
 
 
@@ -85,26 +86,32 @@ public class Baza {
 		return kontakti;
 	}
 	
-	public boolean dodajKontakt(String[] dPodatki) {
+	public int dodajKontakt(String[] dPodatki) {
+		int id = -1;
 		if (dPodatki.length != 6) {
-			return false;
+			return id;
 		} else if (dPodatki[0].length() == 0 || dPodatki[1].length() == 0 || dPodatki[2].length() == 0 
 				|| (dPodatki[5].length() != 4 && dPodatki[5].length() != 0)) {
-			return false;
+			return id;
 		}
 		try {
 			String query = "INSERT INTO KONTAKTI (IME, PRIIMEK, STEVILKA, NASLOV, KRAJ, POSTA) "
 					+ "VALUES (?, ?, ?, ?, ?, ?)";
-			izjava = c.prepareStatement(query);
+			izjava = c.prepareStatement(query, Statement.RETURN_GENERATED_KEYS);
 			for (int i = 0; i < dPodatki.length; i++) {
 				izjava.setString(i+1, dPodatki[i]);
 			}
 			izjava.executeUpdate();
+			
+			ResultSet kljuc = izjava.getGeneratedKeys();
+			if (kljuc.next()) {
+				id = kljuc.getInt(1);
+			}
 		} catch (SQLException e) {
 			System.out.println(e.getMessage());
-			return false;
+			return id;
 		}
-		return true;
+		return id;
 	}
 	
 	public boolean izbrisiKontakt(int id) {
