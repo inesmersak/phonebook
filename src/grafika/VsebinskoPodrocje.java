@@ -33,20 +33,49 @@ import baza.Baza;
 @SuppressWarnings("serial")
 public class VsebinskoPodrocje extends JPanel implements ActionListener, ListSelectionListener, 
 DocumentListener {
+	/**
+	 * JFrame, ki vsebuje objekt tipa VsebinskoPodrocje
+	 */
 	private JFrame parentFrame;
+	
+	/**
+	 * velikost panela
+	 */
 	private Dimension velikost = new Dimension(400, 300);
+	
+	private Baza baza;
+	
 	private JList<String> kontakti;
+	
+	/**
+	 * ListModel za JList kontakti; en element je String z imenom in priimkom kontakta
+	 */
 	private DefaultListModel<String> model;
 	private JEditorPane prikazKontakta;
-	private Baza baza;
+	
+	/**
+	 * seznam vseh kontaktov; te pridobimo iz baze
+	 */
 	private Vector<String[]> seznamVsehKontaktov;
+	
+	/**
+	 * seznam kontaktov, ki so trenutno prikazani na JListu; se spreminja glede na iskalno poizvedbo 
+	 */
 	private Vector<String[]> seznamTrenutnihKontaktov;
-	private NovKontakt oknoKontakta;
+	
 	private JTextField iskalnik;
+	
+	/**
+	 * okno, ki se pojavi ob dodajanju/urejanju kontakta
+	 */
+	private NovKontakt oknoKontakta;
+	
+	// BARVE 
 	private Color barvaToolbara;
 	private Color barvaGumbov;
 	private Color barvaSeznamov;
 	
+	// ACTION COMMANDS
 	static private final String DODAJ = "dodaj";
 	static private final String UREDI = "uredi";
 	static private final String IZBRISI = "izbrisi";
@@ -59,14 +88,16 @@ DocumentListener {
 		
 		baza = danaBaza;
 		seznamVsehKontaktov = baza.izberiTabelo();
-		seznamTrenutnihKontaktov = baza.izberiTabelo();
+		seznamTrenutnihKontaktov = baza.izberiTabelo(); // na zacetku prikazemo vse kontakte
 		
+		// nastavi velikost panela
 		setPreferredSize(velikost);
 		
 		barvaToolbara = new Color(180, 175, 204);
 		barvaGumbov = new Color(215, 213, 224);
 		barvaSeznamov = new Color(215, 213, 224);
 		
+		// TOOLBAR
         JToolBar toolbar = new JToolBar();
         toolbar.setFloatable(false);
         toolbar.setRollover(true);
@@ -82,7 +113,7 @@ DocumentListener {
         c.anchor = GridBagConstraints.ABOVE_BASELINE_LEADING;
         add(toolbar, c);
         
-        JLabel isci = new JLabel("Išči!");
+        JLabel isci = new JLabel("Išči! ");
         GridBagConstraints c1 = new GridBagConstraints();
         c1.fill = GridBagConstraints.HORIZONTAL;
         c1.gridx = 0;
