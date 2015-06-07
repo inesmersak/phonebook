@@ -99,24 +99,6 @@ public class NovKontakt extends JDialog {
 		c.weighty = 0;
 		c.gridx = 1;
 		c.gridy = 6;
-		vsebina.add(shrani, c);
-		
+		vsebina.add(shrani, c);		
 	}
-
-//	@Override
-//	public void actionPerformed(ActionEvent e) {
-//		if (e.getActionCommand().equals(SHRANI)) {
-//			String[] noviPodatki = new String[textfields.length];
-//			for (int i = 0; i < textfields.length; i++) {
-//				noviPodatki[i] = textfields[i].getText();
-//			}
-//			if (id < 0) {
-//				baza.dodajKontakt(noviPodatki);
-//			} else {
-//				baza.posodobiKontakt(id, noviPodatki);
-//			}
-//			dispose();
-//		}
-//	}
-	
 }

@@ -127,14 +127,6 @@ DocumentListener {
         c.weighty = 1;
         c.anchor = GridBagConstraints.SOUTH;
         add(glavnoPodrocje, c);
-        
-//        String[] staro = {"Ines", "Meršak", "040126776", "Plešičeva ulica 25", "Ljubljana", "1000"};
-//        String[] novo = {"Ines", "Meršak", "040126776", "Plešičeva ulica 23", "Ljubljana", "1000"};
-//        boolean dodaj = baza.dodajKontakt("Sandi", "Slak", "041751971", "Ulica bratov Potočnikov 13", 
-//        		"Brezovica pri Ljubljani", "");
-//        System.out.println(dodaj);
-//        boolean update = baza.posodobiKontakt(novo, staro);
-//        System.out.println(update);
 	}
 
 	private String[] dobiPolnaImena() {

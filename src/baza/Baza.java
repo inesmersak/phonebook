@@ -9,9 +9,20 @@ import java.util.Vector;
 
 
 public class Baza {
+	/**
+	 * povezava z bazo
+	 */
 	private Connection c;
+	
+	/**
+	 * sem bomo shranili nas query
+	 */
 	private PreparedStatement izjava = null;
 	
+	/**
+	 * Se poveze z bazo 'imenik.db'. Vkolikor ta baza na disku ne obstaja, naredi novo.
+	 * Povezavo shrani v field 'c'. 
+	 */
 	public void poveziSeZBazo() {
 		c = null;
 		try {
@@ -23,6 +34,9 @@ public class Baza {
 		}	
 	}
 	
+	/**
+	 * Poskrbi za pravilno zaprtje povezave z bazo.
+	 */
 	public void zapriPovezavo() {
 		try {
 			izjava.close();
@@ -32,6 +46,9 @@ public class Baza {
 		}
 	}
 	
+	/**
+	 * Ustvari tabelo 'KONTAKTI' v bazi.
+	 */
 	public void dodajTabelo() {
 		try {
 			String query = "CREATE TABLE KONTAKTI " +
@@ -49,6 +66,9 @@ public class Baza {
 		}
 	}
 	
+	/**
+	 * Izbrise tabelo 'KONTAKTI' iz baze.
+	 */
 	public void izbrisiTabelo() {
 		try {
 			String query = "DROP TABLE KONTAKTI";
@@ -59,9 +79,15 @@ public class Baza {
 		}
 	}
 		
+	/**
+	 * Izbere celotno tabelo v bazi; podatke o vsakem kontaktu spravi v array,
+	 * array pa v Vector, kjer so zbrani vsi kontakti. 
+	 * @return Vector vseh kontaktov
+	 */
 	public Vector<String[]> izberiTabelo() {
 		Vector<String[]> kontakti = null;
 		try {
+			// kontakte razvrstimo po abecednem vrstnem redu priimka, nato se imena
 			String query = "SELECT * FROM KONTAKTI ORDER BY PRIIMEK ASC, IME ASC";
 			izjava = c.prepareStatement(query);
 			ResultSet rez = izjava.executeQuery();
@@ -80,17 +106,28 @@ public class Baza {
 		         String[] kontakt = {ime, priimek, stevilka, naslov, kraj, posta, id};
 		         kontakti.add(kontakt);
 		      }
+			
+			rez.close();
 		} catch (SQLException e) {
 			System.out.println(e.getMessage());
 		}
 		return kontakti;
 	}
 	
+	/**
+	 * Sprejme array podatkov o novem kontaktu in ga, vkolikor zadosca vsem pogojem, 
+	 * doda v tabelo 'KONTAKTI'.
+	 * @param dPodatki 
+	 * @return id dodanega kontakta; -1 za neuspel poskus
+	 */
 	public int dodajKontakt(String[] dPodatki) {
 		int id = -1;
+		// TODO field, kjer je shranjeno stevilo stolpcev
 		if (dPodatki.length != 6) {
 			return id;
-		} else if (dPodatki[0].length() == 0 || dPodatki[1].length() == 0 || dPodatki[2].length() == 0 
+		}
+		// TODO preveri, ce lahko tole izbrises
+		else if (dPodatki[0].length() == 0 || dPodatki[1].length() == 0 || dPodatki[2].length() == 0 
 				|| (dPodatki[5].length() != 4 && dPodatki[5].length() != 0)) {
 			return id;
 		}
@@ -103,10 +140,12 @@ public class Baza {
 			}
 			izjava.executeUpdate();
 			
+			// poizvedba za id novega kontakta
 			ResultSet kljuc = izjava.getGeneratedKeys();
 			if (kljuc.next()) {
 				id = kljuc.getInt(1);
 			}
+			kljuc.close();
 		} catch (SQLException e) {
 			System.out.println(e.getMessage());
 			return id;
@@ -114,6 +153,11 @@ public class Baza {
 		return id;
 	}
 	
+	/**
+	 * Izbrise kontakt z danim id-jem.
+	 * @param id
+	 * @return uspesnost brisanja kontakta
+	 */
 	public boolean izbrisiKontakt(int id) {
 		try {
 			String query = "DELETE FROM KONTAKTI WHERE ID = ?";
@@ -127,6 +171,12 @@ public class Baza {
 		return true;
 	}
 	
+	/**
+	 * Podatke kontakta z danim id-jem zamenja z novimi.
+	 * @param id
+	 * @param noviPodatki
+	 * @return uspesnost posodabljanja podatkov
+	 */
 	public boolean posodobiKontakt(int id, String[] noviPodatki) {
 		try {
 			String query = "UPDATE KONTAKTI SET IME = ?, PRIIMEK = ?, "
@@ -145,6 +195,11 @@ public class Baza {
 		return true;
 	}
 	
+	/**
+	 * Naredi poizvedbo v tabeli 'KONTAKTI' za kontakt z danim id-jem.
+	 * @param id
+	 * @return kontakt
+	 */
 	public String[] pridobiKontakt(int id) {
 		try {
 			String query = "SELECT * FROM KONTAKTI WHERE ID = ?";
