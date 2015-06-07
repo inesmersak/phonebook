@@ -23,13 +23,16 @@ import javax.swing.JSplitPane;
 import javax.swing.JTextField;
 import javax.swing.JToolBar;
 import javax.swing.ListSelectionModel;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
 import baza.Baza;
 
 @SuppressWarnings("serial")
-public class VsebinskoPodrocje extends JPanel implements ActionListener, ListSelectionListener {
+public class VsebinskoPodrocje extends JPanel implements ActionListener, ListSelectionListener, 
+DocumentListener {
 	private JFrame parentFrame;
 	private Dimension velikost = new Dimension(400, 300);
 	private JList<String> kontakti;
@@ -92,6 +95,7 @@ public class VsebinskoPodrocje extends JPanel implements ActionListener, ListSel
         iskalnik = new JTextField();
         iskalnik.setActionCommand(VNESEN_TEKST);
         iskalnik.addActionListener(this);
+        iskalnik.getDocument().addDocumentListener(this);
         c1.gridy = 1;
         toolbar.add(iskalnik, c1);
         
@@ -312,5 +316,20 @@ public class VsebinskoPodrocje extends JPanel implements ActionListener, ListSel
 		kontakti.setModel(novModel);
 		kontakti.addListSelectionListener(this);
         kontakti.setSelectedIndex(prikaz);
+	}
+
+	@Override
+	public void insertUpdate(DocumentEvent e) {
+		posodobiSeznam(false, 0);
+	}
+
+	@Override
+	public void removeUpdate(DocumentEvent e) {
+		posodobiSeznam(false, 0);
+	}
+
+	@Override
+	public void changedUpdate(DocumentEvent e) {
+		posodobiSeznam(false, 0);
 	}
 }
