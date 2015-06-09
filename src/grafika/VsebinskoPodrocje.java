@@ -79,7 +79,6 @@ DocumentListener {
 	static private final String DODAJ = "dodaj";
 	static private final String UREDI = "uredi";
 	static private final String IZBRISI = "izbrisi";
-	static private final String VNESEN_TEKST = "vnesen tekst";
 	
 	public VsebinskoPodrocje(JFrame parent, Baza danaBaza) {
 		super(new GridBagLayout());
@@ -88,7 +87,7 @@ DocumentListener {
 		
 		baza = danaBaza;
 		seznamVsehKontaktov = baza.izberiTabelo();
-		seznamTrenutnihKontaktov = baza.izberiTabelo(); // na zacetku prikazemo vse kontakte
+		seznamTrenutnihKontaktov = baza.izberiTabelo();  // na zacetku prikazemo vse kontakte
 		
 		// nastavi velikost panela
 		setPreferredSize(velikost);
@@ -97,13 +96,16 @@ DocumentListener {
 		barvaGumbov = new Color(215, 213, 224);
 		barvaSeznamov = new Color(215, 213, 224);
 		
-		// TOOLBAR
+		
+		/* ZACETEK TOOLBARJA */
+		
         JToolBar toolbar = new JToolBar();
-        toolbar.setFloatable(false);
+        toolbar.setFloatable(false);  // toolbarja uporabnik ne more premikati
         toolbar.setRollover(true);
         toolbar.setLayout(new GridBagLayout());
         toolbar.setBackground(barvaToolbara);
         
+        // toolbar dodamo na panel
         GridBagConstraints c = new GridBagConstraints();
         c.fill = GridBagConstraints.HORIZONTAL;
         c.gridx = 0;
@@ -113,6 +115,7 @@ DocumentListener {
         c.anchor = GridBagConstraints.ABOVE_BASELINE_LEADING;
         add(toolbar, c);
         
+        // ISKALNIK
         JLabel isci = new JLabel("Išči! ");
         GridBagConstraints c1 = new GridBagConstraints();
         c1.fill = GridBagConstraints.HORIZONTAL;
@@ -124,26 +127,28 @@ DocumentListener {
         toolbar.add(isci, c1);
         
         iskalnik = new JTextField();
-        iskalnik.setActionCommand(VNESEN_TEKST);
-        iskalnik.addActionListener(this);
         iskalnik.getDocument().addDocumentListener(this);
         c1.gridy = 1;
         toolbar.add(iskalnik, c1);
         
         dodajGumbe(toolbar);
         
+        /* KONEC TOOLBARJA */
+        
+        
+        // JList vseh kontaktov
         String[] imena = dobiPolnaImena();
         model = new DefaultListModel<String>();
         for (int i = 0; i < imena.length; i++) {
         	model.addElement(imena[i]);
         }
-        
         kontakti = new JList<String>(model);
         kontakti.setSelectionMode(ListSelectionModel.SINGLE_INTERVAL_SELECTION);
         kontakti.setSelectedIndex(0);
         kontakti.addListSelectionListener(this);
         kontakti.setBackground(barvaSeznamov);
         
+        // okvir s podatki kontakta
         prikazKontakta = new JEditorPane();
         posodobiPrikaz(0);
         kontakti.setBackground(barvaSeznamov);
@@ -160,6 +165,10 @@ DocumentListener {
         add(glavnoPodrocje, c);
 	}
 
+	/**
+	 * Iz polja, v katerem so shranjeni vsi kontakti, izlusci samo imena in priimke ter jih vrne.
+	 * @return array stringov; vsak string je ime in priimek nekega kontakta
+	 */
 	private String[] dobiPolnaImena() {
 		String[] polnaImena = new String[seznamVsehKontaktov.size()];
 		int i = 0;
@@ -175,24 +184,26 @@ DocumentListener {
 	public void actionPerformed(ActionEvent e) {
 		String cmd = e.getActionCommand();
 		if (cmd.equals(DODAJ)) {
-			System.out.println("1" + cmd);
 			oknoKontakta = new NovKontakt(parentFrame, "Dodaj nov kontakt", baza, -1);
+			// na gumb v novem frameu dodamo action listener, da bomo vedeli, kdaj je uporabnik 
+			// koncal z dodajanjem kontakta
 			oknoKontakta.shrani.addActionListener(this);
 			oknoKontakta.pack();
 			oknoKontakta.setVisible(true);
 		} else if (cmd.equals(UREDI)) {
-			System.out.println("2" + cmd);
+			// ime in priimek izbranega kontakta
 			String izbranKontakt = kontakti.getSelectedValue();
-			int idIzbranegaKontakta = Integer.parseInt(
-					seznamTrenutnihKontaktov.elementAt(kontakti.getSelectedIndex()) [6]);
+			String[] kontakt = seznamTrenutnihKontaktov.elementAt(kontakti.getSelectedIndex());
+			// id izbranega kontakta je na zadnjem mestu v arrayu, ki predstavlja kontakt
+			int idIzbranegaKontakta = Integer.parseInt(kontakt[kontakt.length-1]);
 			oknoKontakta = new NovKontakt(parentFrame, izbranKontakt, baza, idIzbranegaKontakta);
 			oknoKontakta.shrani.addActionListener(this);
 			oknoKontakta.pack();
 			oknoKontakta.setVisible(true);
 		} else if (cmd.equals(IZBRISI)) {
-			System.out.println("3" + cmd);
 			int izbranIndeks = kontakti.getSelectedIndex();
 			String izbranKontakt = kontakti.getSelectedValue();
+			// prikazemo dialog, ki od uporabnika zahteva potrditev brisanja
 			int potrditevBrisanja = JOptionPane.showOptionDialog(this.getParent(), 
 					"Ali ste prepričani, da želite izbrisati kontakt " + izbranKontakt + "?", 
 					"Izbriši " + izbranKontakt,
@@ -202,7 +213,8 @@ DocumentListener {
 			        new String[]{"Da", "Ne"},
 			        "default");
 			if (potrditevBrisanja == JOptionPane.YES_OPTION) {
-				baza.izbrisiKontakt(Integer.parseInt(seznamTrenutnihKontaktov.elementAt(izbranIndeks) [6]));
+				String[] kontakt = seznamTrenutnihKontaktov.elementAt(izbranIndeks);
+				baza.izbrisiKontakt(Integer.parseInt(kontakt[kontakt.length-1]));
 				posodobiSeznam(true, 0);
 			}
 		} else if (cmd.equals(NovKontakt.SHRANI)) {
@@ -210,6 +222,7 @@ DocumentListener {
 			for (int i = 0; i < oknoKontakta.textfields.length; i++) {
 				noviPodatki[i] = oknoKontakta.textfields[i].getText();
 			}
+			// preverimo, da so obvezna polja izpolnjena
 			if (noviPodatki[0].length() == 0 || noviPodatki[1].length() == 0 || noviPodatki[2].length() == 0) {
 				JOptionPane.showMessageDialog(oknoKontakta.getParent(), 
 						"Polja 'Ime', 'Priimek' in 'Telefonska številka' so obvezna!", 
@@ -219,7 +232,7 @@ DocumentListener {
 				if (oknoKontakta.id < 0) {
 					int id = baza.dodajKontakt(noviPodatki);
 					if (id == -1) {
-						// TODO zakaj ni uspesno - dolzina postne stevilke etc.
+						// TODO zakaj ni uspesno 
 						JOptionPane.showMessageDialog(this, 
 								"Dodajanje kontakta ni uspelo!", 
 								"Kontakt ni bil dodan", JOptionPane.ERROR_MESSAGE);
@@ -238,10 +251,8 @@ DocumentListener {
 					}
 				}
 				posodobiSeznam(true, idZaPrikaz);
-				oknoKontakta.dispose();
+				oknoKontakta.dispose();  // zapremo okno za urejanje kontakta
 			}
-		} else if (cmd.equals(VNESEN_TEKST)) {
-			posodobiSeznam(false, 0);
 		} else {
 			System.out.println("command not found");
 		}
