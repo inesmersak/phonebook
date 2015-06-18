@@ -163,7 +163,60 @@ DocumentListener {
         c.anchor = GridBagConstraints.SOUTH;
         add(glavnoPodrocje, c);
 	}
-
+	
+	/**
+	 * @param imeSlike
+	 * @param actionCommand
+	 * @param altTekst
+	 * @return gumb z dano sliko in alt-tekstom
+	 */
+	private JButton narediGumb(String imeSlike, String actionCommand, String altTekst) {
+		JButton gumb = new JButton();
+		gumb.setActionCommand(actionCommand);
+		gumb.setToolTipText(altTekst);
+		gumb.addActionListener(this);
+//		gumb.setBackground(barvaGumbov);
+		
+		String potSlike = "/" + imeSlike + ".png";
+		URL urlSlike = VsebinskoPodrocje.class.getResource(potSlike);
+		
+		if (urlSlike != null) {
+			gumb.setIcon(new ImageIcon(urlSlike, altTekst));
+		} else {
+			// ce slika ne obstaja, namesto slike prikazemo alternativni tekst
+			gumb.setText(altTekst);
+		}
+		return gumb;
+	}
+	
+	/**
+	 * S pomocjo 'narediGumb' naredi gumbe in jih doda v dani toolbar. 
+	 * @param toolbar
+	 */
+	private void dodajGumbe(JToolBar toolbar) {
+		JButton gumb = null;
+		
+		GridBagConstraints c = new GridBagConstraints();
+		c.fill = GridBagConstraints.NONE;
+		c.gridy = 0;
+		c.gridx = 1;
+		c.weightx = 0;
+		c.weighty = 0;
+		c.gridheight = 2;
+		c.anchor = GridBagConstraints.EAST;
+		
+		gumb = narediGumb("dodaj", DODAJ, "Dodaj številko");
+		toolbar.add(gumb, c);
+		
+		c.gridx = 2;
+		gumb = narediGumb("uredi", UREDI, "Uredi številko");
+		toolbar.add(gumb, c);
+		
+		c.gridx = 3;
+		gumb = narediGumb("izbrisi", IZBRISI, "Izbriši številko");
+		toolbar.add(gumb, c);
+	}
+	
 	/**
 	 * Iz polja, v katerem so shranjeni vsi kontakti, izlusci samo imena in priimke ter jih vrne.
 	 * @return array stringov; vsak string je ime in priimek nekega kontakta
@@ -178,7 +231,57 @@ DocumentListener {
 		}
 		return polnaImena;
 	}
+	
+	/**
+	 * Ob kliku na drug kontakt zamenja podatke kontakta na desni strani.
+	 * @param indeks Indeks elementa, ki je bil kliknjen.
+	 */
+	private void posodobiPrikaz(int indeks) {
+		String[] izbranKontakt = seznamTrenutnihKontaktov.elementAt(indeks);
+		String zaPrikaz = String.format("Ime: %s \n" +
+				"Priimek: %s \n" +
+				"Telefonska številka: %s \n" +
+				"Naslov: %s \n" +
+				"Kraj: %s \n" +
+				"Poštna številka: %s \n", 
+				(Object[]) izbranKontakt);
+		prikazKontakta.setText(zaPrikaz);
+	}
 		
+	/**
+	 * Posodobi JList s kontakti. Ce so se zgodile spremembe v bazi, iskalno polje nastavi na prazno. 
+	 * Sicer pri posodabljanju uposteva le kontakte, ki vsebujejo vzorec v iskalnem polju.
+	 * @param spremembaBaze
+	 * @param id
+	 */
+	private void posodobiSeznam(boolean spremembaBaze, int id) {
+		if (spremembaBaze) { 
+			// ce so se zgodile spremembe v bazi, moramo najprej posodobiti seznam vseh kontaktov
+			seznamVsehKontaktov = baza.izberiTabelo();
+			iskalnik.setText("");
+			}
+		String poizvedba = iskalnik.getText().toLowerCase();  // kar je trenutno napisano v polju isci
+		DefaultListModel<String> novModel = new DefaultListModel<String>();
+		seznamTrenutnihKontaktov.removeAllElements();
+		String[] imena = dobiPolnaImena();
+		int prikaz = 0;
+		for (int i = 0; i < imena.length; i++) {
+			String ime = imena[i];
+			if (ime.toLowerCase().contains(poizvedba)) {
+				String[] kontakt = seznamVsehKontaktov.elementAt(i);
+				seznamTrenutnihKontaktov.add(kontakt);
+				novModel.addElement(ime);
+				if (Integer.parseInt(kontakt[kontakt.length-1]) == id) {
+					prikaz = novModel.getSize() - 1;
+				}
+			}
+        }
+		kontakti.removeListSelectionListener(this);
+		kontakti.setModel(novModel);
+		kontakti.addListSelectionListener(this);
+        kontakti.setSelectedIndex(prikaz);
+	}
+	
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		String cmd = e.getActionCommand();
@@ -255,59 +358,6 @@ DocumentListener {
 			System.out.println("command not found");
 		}
 	}
-	
-	/**
-	 * @param imeSlike
-	 * @param actionCommand
-	 * @param altTekst
-	 * @return gumb z dano sliko in alt-tekstom
-	 */
-	private JButton narediGumb(String imeSlike, String actionCommand, String altTekst) {
-		JButton gumb = new JButton();
-		gumb.setActionCommand(actionCommand);
-		gumb.setToolTipText(altTekst);
-		gumb.addActionListener(this);
-//		gumb.setBackground(barvaGumbov);
-		
-		String potSlike = "/" + imeSlike + ".png";
-		URL urlSlike = VsebinskoPodrocje.class.getResource(potSlike);
-		
-		if (urlSlike != null) {
-			gumb.setIcon(new ImageIcon(urlSlike, altTekst));
-		} else {
-			// ce slika ne obstaja, namesto slike prikazemo alternativni tekst
-			gumb.setText(altTekst);
-		}
-		return gumb;
-	}
-	
-	/**
-	 * S pomocjo 'narediGumb' naredi gumbe in jih doda v dani toolbar. 
-	 * @param toolbar
-	 */
-	private void dodajGumbe(JToolBar toolbar) {
-		JButton gumb = null;
-		
-		GridBagConstraints c = new GridBagConstraints();
-		c.fill = GridBagConstraints.NONE;
-		c.gridy = 0;
-		c.gridx = 1;
-		c.weightx = 0;
-		c.weighty = 0;
-		c.gridheight = 2;
-		c.anchor = GridBagConstraints.EAST;
-		
-		gumb = narediGumb("dodaj", DODAJ, "Dodaj številko");
-		toolbar.add(gumb, c);
-		
-		c.gridx = 2;
-		gumb = narediGumb("uredi", UREDI, "Uredi številko");
-		toolbar.add(gumb, c);
-		
-		c.gridx = 3;
-		gumb = narediGumb("izbrisi", IZBRISI, "Izbriši številko");
-		toolbar.add(gumb, c);
-	}
 
 	@Override
 	public void valueChanged(ListSelectionEvent e) {
@@ -317,56 +367,6 @@ DocumentListener {
 		posodobiPrikaz(ind);
 	}
 	
-	/**
-	 * Ob kliku na drug kontakt zamenja podatke kontakta na desni strani.
-	 * @param indeks Indeks elementa, ki je bil kliknjen.
-	 */
-	private void posodobiPrikaz(int indeks) {
-		String[] izbranKontakt = seznamTrenutnihKontaktov.elementAt(indeks);
-		String zaPrikaz = String.format("Ime: %s \n" +
-				"Priimek: %s \n" +
-				"Telefonska številka: %s \n" +
-				"Naslov: %s \n" +
-				"Kraj: %s \n" +
-				"Poštna številka: %s \n", 
-				(Object[]) izbranKontakt);
-		prikazKontakta.setText(zaPrikaz);
-	}
-		
-	/**
-	 * Posodobi JList s kontakti. Ce so se zgodile spremembe v bazi, iskalno polje nastavi na prazno. 
-	 * Sicer pri posodabljanju uposteva le kontakte, ki vsebujejo vzorec v iskalnem polju.
-	 * @param spremembaBaze
-	 * @param id
-	 */
-	private void posodobiSeznam(boolean spremembaBaze, int id) {
-		if (spremembaBaze) { 
-			// ce so se zgodile spremembe v bazi, moramo najprej posodobiti seznam vseh kontaktov
-			seznamVsehKontaktov = baza.izberiTabelo();
-			iskalnik.setText("");
-			}
-		String poizvedba = iskalnik.getText().toLowerCase();  // kar je trenutno napisano v polju isci
-		DefaultListModel<String> novModel = new DefaultListModel<String>();
-		seznamTrenutnihKontaktov.removeAllElements();
-		String[] imena = dobiPolnaImena();
-		int prikaz = 0;
-		for (int i = 0; i < imena.length; i++) {
-			String ime = imena[i];
-			if (ime.toLowerCase().contains(poizvedba)) {
-				String[] kontakt = seznamVsehKontaktov.elementAt(i);
-				seznamTrenutnihKontaktov.add(kontakt);
-				novModel.addElement(ime);
-				if (Integer.parseInt(kontakt[kontakt.length-1]) == id) {
-					prikaz = novModel.getSize() - 1;
-				}
-			}
-        }
-		kontakti.removeListSelectionListener(this);
-		kontakti.setModel(novModel);
-		kontakti.addListSelectionListener(this);
-        kontakti.setSelectedIndex(prikaz);
-	}
-
 	@Override
 	public void insertUpdate(DocumentEvent e) {
 		posodobiSeznam(false, 0);

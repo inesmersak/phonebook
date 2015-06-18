@@ -20,6 +20,11 @@ public class Baza {
 	private PreparedStatement izjava = null;
 	
 	/**
+	 * koliko stolpcev (razlicnih tipov podatkov) imamo v tabeli
+	 */
+	private int steviloStolpcev = 6;
+	
+	/**
 	 * Se poveze z bazo 'imenik.db'. Vkolikor ta baza na disku ne obstaja, naredi novo.
 	 * Povezavo shrani v field 'c'. 
 	 */
@@ -102,7 +107,7 @@ public class Baza {
 		         String naslov = rez.getString("naslov");
 		         String kraj = rez.getString("kraj");
 		         String posta = rez.getString("posta");
-		         System.out.println(id + ime + priimek + stevilka + naslov + kraj + posta);
+//		         System.out.println(id + ime + priimek + stevilka + naslov + kraj + posta);
 		         String[] kontakt = {ime, priimek, stevilka, naslov, kraj, posta, id};
 		         kontakti.add(kontakt);
 		      }
@@ -122,11 +127,11 @@ public class Baza {
 	 */
 	public int dodajKontakt(String[] dPodatki) {
 		int id = -1;
-		// TODO field, kjer je shranjeno stevilo stolpcev
-		if (dPodatki.length != 6) {
+		if (dPodatki.length != steviloStolpcev) {
 			return id;
 		}
 		else if (dPodatki[0].length() == 0 || dPodatki[1].length() == 0 || dPodatki[2].length() == 0) {
+			// ime, priimek in stevilka ne smejo biti prazen string
 			return id;
 		}
 		try {
