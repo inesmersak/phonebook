@@ -24,6 +24,14 @@ public class NovKontakt extends JDialog {
 	
 	static protected final String SHRANI = "shrani";
 
+	/**
+	 * Okno s textfieldi, kamor lahko uporabnik vnese podatke novega kontakta / kjer lahko posodobi
+	 * podatke ze dodanega kontakta.
+	 * @param parentFrame
+	 * @param title
+	 * @param danaBaza
+	 * @param daniId
+	 */
 	public NovKontakt(JFrame parentFrame, String title, Baza danaBaza, int daniId) {
 		super(parentFrame, title, true);
 		baza = danaBaza;
@@ -71,6 +79,7 @@ public class NovKontakt extends JDialog {
 		for (int i = 0; i < textfields.length; i++) {
 			textfields[i] = new JTextField();
 			if (id > 0) {
+				// torej ne gre za dodajanje novega kontakta, temvec za urejanje starega
 				String[] danKontakt = baza.pridobiKontakt(id);
 				textfields[i].setText(danKontakt[i]);
 			}

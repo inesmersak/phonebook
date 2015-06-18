@@ -126,9 +126,7 @@ public class Baza {
 		if (dPodatki.length != 6) {
 			return id;
 		}
-		// TODO preveri, ce lahko tole izbrises
-		else if (dPodatki[0].length() == 0 || dPodatki[1].length() == 0 || dPodatki[2].length() == 0 
-				|| (dPodatki[5].length() != 4 && dPodatki[5].length() != 0)) {
+		else if (dPodatki[0].length() == 0 || dPodatki[1].length() == 0 || dPodatki[2].length() == 0) {
 			return id;
 		}
 		try {

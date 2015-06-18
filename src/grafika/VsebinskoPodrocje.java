@@ -232,7 +232,6 @@ DocumentListener {
 				if (oknoKontakta.id < 0) {
 					int id = baza.dodajKontakt(noviPodatki);
 					if (id == -1) {
-						// TODO zakaj ni uspesno 
 						JOptionPane.showMessageDialog(this, 
 								"Dodajanje kontakta ni uspelo!", 
 								"Kontakt ni bil dodan", JOptionPane.ERROR_MESSAGE);
@@ -258,6 +257,12 @@ DocumentListener {
 		}
 	}
 	
+	/**
+	 * @param imeSlike
+	 * @param actionCommand
+	 * @param altTekst
+	 * @return gumb z dano sliko in alt-tekstom
+	 */
 	private JButton narediGumb(String imeSlike, String actionCommand, String altTekst) {
 		JButton gumb = new JButton();
 		gumb.setActionCommand(actionCommand);
@@ -271,12 +276,16 @@ DocumentListener {
 		if (urlSlike != null) {
 			gumb.setIcon(new ImageIcon(urlSlike, altTekst));
 		} else {
+			// ce slika ne obstaja, namesto slike prikazemo alternativni tekst
 			gumb.setText(altTekst);
 		}
-		
 		return gumb;
 	}
 	
+	/**
+	 * S pomocjo 'narediGumb' naredi gumbe in jih doda v dani toolbar. 
+	 * @param toolbar
+	 */
 	private void dodajGumbe(JToolBar toolbar) {
 		JButton gumb = null;
 		
@@ -310,8 +319,8 @@ DocumentListener {
 	}
 	
 	/**
+	 * Ob kliku na drug kontakt zamenja podatke kontakta na desni strani.
 	 * @param indeks Indeks elementa, ki je bil kliknjen.
-	 * Ob kliku na drug kontakt zamenja prikaz na desni strani.
 	 */
 	private void posodobiPrikaz(int indeks) {
 		String[] izbranKontakt = seznamTrenutnihKontaktov.elementAt(indeks);
@@ -325,12 +334,19 @@ DocumentListener {
 		prikazKontakta.setText(zaPrikaz);
 	}
 		
+	/**
+	 * Posodobi JList s kontakti. Ce so se zgodile spremembe v bazi, iskalno polje nastavi na prazno. 
+	 * Sicer pri posodabljanju uposteva le kontakte, ki vsebujejo vzorec v iskalnem polju.
+	 * @param spremembaBaze
+	 * @param id
+	 */
 	private void posodobiSeznam(boolean spremembaBaze, int id) {
 		if (spremembaBaze) { 
+			// ce so se zgodile spremembe v bazi, moramo najprej posodobiti seznam vseh kontaktov
 			seznamVsehKontaktov = baza.izberiTabelo();
 			iskalnik.setText("");
 			}
-		String poizvedba = iskalnik.getText().toLowerCase();
+		String poizvedba = iskalnik.getText().toLowerCase();  // kar je trenutno napisano v polju isci
 		DefaultListModel<String> novModel = new DefaultListModel<String>();
 		seznamTrenutnihKontaktov.removeAllElements();
 		String[] imena = dobiPolnaImena();
