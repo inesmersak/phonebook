@@ -143,13 +143,17 @@ DocumentListener {
         }
         kontakti = new JList<String>(model);
         kontakti.setSelectionMode(ListSelectionModel.SINGLE_INTERVAL_SELECTION);
-        kontakti.setSelectedIndex(0);
+        if (seznamTrenutnihKontaktov.size() > 0) {
+        	kontakti.setSelectedIndex(0);
+        }
         kontakti.addListSelectionListener(this);
 //        kontakti.setBackground(barvaSeznamov);
         
         // okvir s podatki kontakta
         prikazKontakta = new JEditorPane();
-        posodobiPrikaz(0);
+        if (seznamTrenutnihKontaktov.size() > 0) { 
+        	posodobiPrikaz(0);
+        }
 //        kontakti.setBackground(barvaSeznamov);
         
         JScrollPane kontaktiScrollPane = new JScrollPane(kontakti);
@@ -280,6 +284,10 @@ DocumentListener {
 		kontakti.setModel(novModel);
 		kontakti.addListSelectionListener(this);
         kontakti.setSelectedIndex(prikaz);
+        
+        if (seznamTrenutnihKontaktov.size() == 0) {
+        	prikazKontakta.setText("");
+        }
 	}
 	
 	@Override
