@@ -89,7 +89,6 @@ public class NovKontakt extends JDialog {
 		
 		c = new GridBagConstraints();
 		JLabel obvezna_polja = new JLabel("Polja z * so obvezna!");
-//		System.out.println(obvezna_polja.getFont().getFontName());
 		obvezna_polja.setFont(new Font("Dialog", Font.PLAIN, 10));
 		c.fill = GridBagConstraints.NONE;
 		c.anchor = GridBagConstraints.WEST;
