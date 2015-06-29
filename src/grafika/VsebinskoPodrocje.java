@@ -11,7 +11,6 @@ import java.util.Vector;
 import javax.swing.DefaultListModel;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
-import javax.swing.JEditorPane;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JList;
@@ -20,6 +19,7 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
 import javax.swing.JTextField;
+import javax.swing.JTextPane;
 import javax.swing.JToolBar;
 import javax.swing.ListSelectionModel;
 import javax.swing.event.DocumentEvent;
@@ -50,7 +50,7 @@ DocumentListener {
 	 * ListModel za JList kontakti; en element je String z imenom in priimkom kontakta
 	 */
 	private DefaultListModel<String> model;
-	private JEditorPane prikazKontakta;
+	private JTextPane prikazKontakta;
 	
 	/**
 	 * seznam vseh kontaktov; te pridobimo iz baze
@@ -150,7 +150,8 @@ DocumentListener {
 //        kontakti.setBackground(barvaSeznamov);
         
         // okvir s podatki kontakta
-        prikazKontakta = new JEditorPane();
+        prikazKontakta = new JTextPane();
+        prikazKontakta.setEditable(false);
         if (seznamTrenutnihKontaktov.size() > 0) { 
         	posodobiPrikaz(0);
         }
@@ -301,31 +302,35 @@ DocumentListener {
 			oknoKontakta.pack();
 			oknoKontakta.setVisible(true);
 		} else if (cmd.equals(UREDI)) {
-			// ime in priimek izbranega kontakta
-			String izbranKontakt = kontakti.getSelectedValue();
-			String[] kontakt = seznamTrenutnihKontaktov.elementAt(kontakti.getSelectedIndex());
-			// id izbranega kontakta je na zadnjem mestu v arrayu, ki predstavlja kontakt
-			int idIzbranegaKontakta = Integer.parseInt(kontakt[kontakt.length-1]);
-			oknoKontakta = new NovKontakt(parentFrame, izbranKontakt, baza, idIzbranegaKontakta);
-			oknoKontakta.shrani.addActionListener(this);
-			oknoKontakta.pack();
-			oknoKontakta.setVisible(true);
+			if (seznamTrenutnihKontaktov.size() > 0) {
+				// ime in priimek izbranega kontakta
+				String izbranKontakt = kontakti.getSelectedValue();
+				String[] kontakt = seznamTrenutnihKontaktov.elementAt(kontakti.getSelectedIndex());
+				// id izbranega kontakta je na zadnjem mestu v arrayu, ki predstavlja kontakt
+				int idIzbranegaKontakta = Integer.parseInt(kontakt[kontakt.length-1]);
+				oknoKontakta = new NovKontakt(parentFrame, izbranKontakt, baza, idIzbranegaKontakta);
+				oknoKontakta.shrani.addActionListener(this);
+				oknoKontakta.pack();
+				oknoKontakta.setVisible(true);
+			}
 		} else if (cmd.equals(IZBRISI)) {
-			int izbranIndeks = kontakti.getSelectedIndex();
-			String izbranKontakt = kontakti.getSelectedValue();
-			// prikazemo dialog, ki od uporabnika zahteva potrditev brisanja
-			int potrditevBrisanja = JOptionPane.showOptionDialog(this.getParent(), 
-					"Ali ste prepričani, da želite izbrisati kontakt " + izbranKontakt + "?", 
-					"Izbriši " + izbranKontakt,
-					JOptionPane.YES_NO_OPTION,
-					JOptionPane.QUESTION_MESSAGE,
-					null, 
-			        new String[]{"Da", "Ne"},
-			        "default");
-			if (potrditevBrisanja == JOptionPane.YES_OPTION) {
-				String[] kontakt = seznamTrenutnihKontaktov.elementAt(izbranIndeks);
-				baza.izbrisiKontakt(Integer.parseInt(kontakt[kontakt.length-1]));
-				posodobiSeznam(true, 0);
+			if (seznamTrenutnihKontaktov.size() > 0) {
+				int izbranIndeks = kontakti.getSelectedIndex();
+				String izbranKontakt = kontakti.getSelectedValue();
+				// prikazemo dialog, ki od uporabnika zahteva potrditev brisanja
+				int potrditevBrisanja = JOptionPane.showOptionDialog(this.getParent(), 
+						"Ali ste prepričani, da želite izbrisati kontakt " + izbranKontakt + "?", 
+						"Izbriši " + izbranKontakt,
+						JOptionPane.YES_NO_OPTION,
+						JOptionPane.QUESTION_MESSAGE,
+						null, 
+						new String[]{"Da", "Ne"},
+						"default");
+				if (potrditevBrisanja == JOptionPane.YES_OPTION) {
+					String[] kontakt = seznamTrenutnihKontaktov.elementAt(izbranIndeks);
+					baza.izbrisiKontakt(Integer.parseInt(kontakt[kontakt.length-1]));
+					posodobiSeznam(true, 0);
+				}
 			}
 		} else if (cmd.equals(NovKontakt.SHRANI)) {
 			String[] noviPodatki = new String[oknoKontakta.textfields.length];
